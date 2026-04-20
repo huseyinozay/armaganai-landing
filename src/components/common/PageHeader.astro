@@ -4,9 +4,10 @@ import { upperHumanize } from "@lib/textConverter";
 
 interface Props {
   title?: string;
+  showBreadcrumbs?: boolean;
 }
 
-const { title = "" }: Props = Astro.props;
+const { title = "", showBreadcrumbs = true }: Props = Astro.props;
 ---
 
 <section class="flex justify-center">
@@ -14,7 +15,7 @@ const { title = "" }: Props = Astro.props;
     <div class="rounded-lg p-0 bg-gradient-to-t gradient">
       <div class="rounded-lg glass px-8 py-6 intersect:animate-fadeDown opacity-0 intersect-no-queue">
         <h1 set:text={upperHumanize(title)} />
-        <Breadcrumbs className="mt-4" />
+        {showBreadcrumbs && <Breadcrumbs className="mt-4" />}
       </div>
     </div>
   </div>

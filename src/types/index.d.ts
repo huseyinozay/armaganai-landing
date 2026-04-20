@@ -8,12 +8,14 @@ export type BlogEntry = CollectionEntry<"blog">;
 export type DocsEntry = CollectionEntry<"docs">;
 export type HomeEntry = CollectionEntry<"home">;
 export type TermsEntry = CollectionEntry<"terms">;
+export type PrivacyEntry = CollectionEntry<"privacy">;
 
 export type SearchableEntry =
   | AboutEntry
   | BlogEntry
   | DocsEntry
-  | TermsEntry;
+  | TermsEntry
+  | PrivacyEntry;
 
 export type SocialLinks = {
   discord?: string;

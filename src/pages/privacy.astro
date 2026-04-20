@@ -1,14 +1,11 @@
 ---
 import BaseLayout from "@components/base/BaseLayout.astro";
 import PageHeader from "@components/common/PageHeader.astro";
-import type { TermsEntry } from "@/types";
+import { getIndex } from "@lib/contentParser";
+import type { PrivacyEntry } from "@/types";
 import { render } from "astro:content";
 
-interface Props {
-  entry: TermsEntry;
-}
-
-const { entry } = Astro.props;
+const entry = (await getIndex("privacy")) as PrivacyEntry;
 const { title, description } = entry.data;
 const { Content } = await render(entry);
 ---
