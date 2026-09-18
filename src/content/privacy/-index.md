@@ -128,6 +128,18 @@ ArmaganAI Chrome Eklentisi, UYAP ve UETS portallarından çektiği hukuki dosya 
 
 Tarayıcınızda yalnızca şifrelenmiş kimlik doğrulama anahtarları (token) ve senkronizasyon durumu lokal olarak tutulur. Eklenti aracılığıyla toplanan hiçbir veri üçüncü şahıslara satılmaz, farklı kurumlarla paylaşılmaz veya reklam amacıyla kullanılmaz. Veriler, yalnızca KULLANICI'nın kendi ArmaganAI hesabına entegre edilmek ve talep edilen hizmetin ifası amacıyla işlenir.
 
+## Google Takvim Entegrasyonu
+
+ArmaganAI, yalnızca kullanıcının açık izniyle Google Takvim'e erişir. Bu erişim şu amaçla kullanılır: kullanıcının Google hesabında ArmaganAI'ye ait ayrı bir takvim oluşturmak ve kullanıcının ArmaganAI'deki takvim kayıtlarını bu takvime yazmak.
+
+Talep edilen izin **calendar.app.created** kapsamıyla sınırlıdır; bu kapsam yalnızca uygulamanın kendi oluşturduğu takvime erişim verir. Kullanıcının mevcut takvimleri ve etkinlikleri okunmaz, görüntülenmez.
+
+Google'dan alınan erişim ve yenileme anahtarları şifrelenerek saklanır, yalnızca bu aktarımı gerçekleştirmek için kullanılır. Google kullanıcı verileri üçüncü taraflarla paylaşılmaz, reklam amacıyla kullanılmaz, insan tarafından okunmaz ve satılmaz.
+
+Aktarım tek yönlüdür: Google Takvim'de yapılan değişiklikler ArmaganAI'ye geri işlenmez.
+
+Kullanıcı bağlantıyı dilediği zaman ArmaganAI içinden veya Google Hesap ayarlarından (myaccount.google.com/permissions) kaldırabilir. Bağlantı kaldırıldığında saklanan anahtarlar silinir; Google hesabındaki takvim ve kayıtlar silinmez, yalnızca güncellenmeyi bırakır.
+
 ## Üçüncü Kişi (Müvekkil) Verileri ve Rol Ayrımı
 
 Sisteme yüklediğiniz belgelerde yer alan üçüncü kişilere (müvekkilleriniz, karşı taraf vb.) ait kişisel veriler bakımından, Armağan AI **"Veri İşleyen" (Data Processor)**, siz ise **"Veri Sorumlusu" (Data Controller)** sıfatını haizsiniz. Bu verileri sisteme yüklemeden önce ilgili kişileri aydınlatma ve gerekmesi hâlinde açık rızalarını alma yükümlülüğü tarafınıza aittir.
