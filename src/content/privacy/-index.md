@@ -130,15 +130,22 @@ Tarayıcınızda yalnızca şifrelenmiş kimlik doğrulama anahtarları (token) 
 
 ## Google Takvim Entegrasyonu
 
-ArmaganAI, yalnızca kullanıcının açık izniyle Google Takvim'e erişir. Bu erişim şu amaçla kullanılır: kullanıcının Google hesabında ArmaganAI'ye ait ayrı bir takvim oluşturmak ve kullanıcının ArmaganAI'deki takvim kayıtlarını bu takvime yazmak.
+ArmaganAI, yalnızca kullanıcının açık izniyle Google Takvim'e erişir. Bu erişim tek bir amaçla kullanılır: kullanıcının Google hesabında ArmaganAI'ye ait ayrı bir takvim oluşturmak ve bürosunun ArmaganAI'deki takvim kayıtlarını bu takvime yazmak. Hangi bilgilerin aktarıldığı, bağlantı kurulmadan önce gösterilen bilgilendirme metninde tek tek listelenir. Kişisel kayıtlar aktarılmaz.
 
-Talep edilen izin **calendar.app.created** kapsamıyla sınırlıdır; bu kapsam yalnızca uygulamanın kendi oluşturduğu takvime erişim verir. Kullanıcının mevcut takvimleri ve etkinlikleri okunmaz, görüntülenmez.
+Talep edilen izinler şunlardır:
 
-Google'dan alınan erişim ve yenileme anahtarları şifrelenerek saklanır, yalnızca bu aktarımı gerçekleştirmek için kullanılır. Google kullanıcı verileri üçüncü taraflarla paylaşılmaz, reklam amacıyla kullanılmaz, insan tarafından okunmaz ve satılmaz.
+- **calendar.app.created:** Yalnızca uygulamanın kendi oluşturduğu takvime erişim verir. Kullanıcının mevcut takvimleri ve etkinlikleri okunmaz, görüntülenmez.
+- **openid** ve **email:** Bağlanan Google hesabını tanımak için hesabın e-posta adresini okur.
+
+Google'dan alınan erişim ve yenileme anahtarları şifrelenerek saklanır ve yalnızca bu aktarımı gerçekleştirmek için kullanılır. Bağlanan hesabın e-posta adresi, bağlantıyı tanımak için saklanır. Google kullanıcı verileri üçüncü taraflarla paylaşılmaz, reklam amacıyla kullanılmaz, insanlar tarafından okunmaz ve satılmaz.
+
+Google Takvim'e aktarılan kayıtlar Google'ın yurt dışındaki sunucularında tutulur. Bu aktarım kullanıcının açık rızasıyla yapılır.
 
 Aktarım tek yönlüdür: Google Takvim'de yapılan değişiklikler ArmaganAI'ye geri işlenmez.
 
-Kullanıcı bağlantıyı dilediği zaman ArmaganAI içinden veya Google Hesap ayarlarından (myaccount.google.com/permissions) kaldırabilir. Bağlantı kaldırıldığında saklanan anahtarlar silinir; Google hesabındaki takvim ve kayıtlar silinmez, yalnızca güncellenmeyi bırakır.
+Kullanıcı bağlantıyı dilediği zaman ArmaganAI içinden veya Google Hesap ayarlarından (myaccount.google.com/permissions) kaldırabilir. Bağlantı ArmaganAI içinden kaldırıldığında saklanan anahtarlar silinir ve Google'daki erişim izni geri alınır. Bağlantı Google Hesap ayarlarından kaldırılırsa saklanan anahtarlar geçersiz hâle gelir ve bir daha kullanılamaz. Bağlanan hesabın e-posta adresi, aynı hesapla yeniden bağlanmayı tanımak için saklanmaya devam eder. Google hesabındaki takvim ve kayıtlar silinmez, yalnızca güncellenmeyi bırakır.
+
+ArmaganAI'nin Google API'lerinden aldığı bilgileri kullanması ve başka bir uygulamaya aktarması, Sınırlı Kullanım (Limited Use) gereklilikleri dahil [Google API Hizmetleri Kullanıcı Verileri Politikası](https://developers.google.com/terms/api-services-user-data-policy)'na uygundur.
 
 ## Üçüncü Kişi (Müvekkil) Verileri ve Rol Ayrımı
 
