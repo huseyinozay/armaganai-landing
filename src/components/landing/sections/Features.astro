@@ -1,0 +1,198 @@
+---
+import {
+  LuMailOpen,
+  LuMessagesSquare,
+  LuListChecks,
+  LuCalendarDays,
+  LuFolderSync,
+  LuTabletSmartphone,
+  LuArrowRight,
+} from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import type { MascotColor } from "../mascot/family";
+
+// Hero'nun altındaki özet: her özellik eşit ağırlıkta, kendi bölümüne götürür.
+const features: { icon: typeof LuMailOpen; color: MascotColor; title: string; text: string; href: string }[] = [
+  {
+    icon: LuMailOpen,
+    color: "red",
+    title: "Tebligat ve süre",
+    text: "UETS'ye düşen tebligatı okur, süreyi kanundan hesaplar, takvime ve göreve yazar.",
+    href: "#tebligat",
+  },
+  {
+    icon: LuMessagesSquare,
+    color: "green",
+    title: "Asistan",
+    text: "Günlük dille yazın: müvekkilin dosyalarını getirir, görev ve takvim kaydını sizin için açar.",
+    href: "#asistan",
+  },
+  {
+    icon: LuListChecks,
+    color: "yellow",
+    title: "Görevlendirme",
+    text: "İşi kişilere dağıtın; kimin neyle uğraştığını, neyin bittiğini, neyin onay beklediğini görün.",
+    href: "#gorevler",
+  },
+  {
+    icon: LuCalendarDays,
+    color: "yellow",
+    title: "Takvim",
+    text: "Duruşmalar, kesin süreler ve toplantılar tek takvimde; hatırlatmalar uygulamaya ve e-postaya gelir.",
+    href: "#takvim",
+  },
+  {
+    icon: LuFolderSync,
+    color: "purple",
+    title: "UYAP entegrasyonu",
+    text: "Dosyalar, taraflar, duruşmalar ve evrak UYAP'tan gelir; önemli evrak öne çıkar.",
+    href: "#uyap",
+  },
+  {
+    icon: LuTabletSmartphone,
+    color: "purple",
+    title: "Telefon ve tablet",
+    text: "Duruşmaya dosya taşımayın: dosyalarınız, takviminiz ve evrakınız yanınızda.",
+    href: "#her-yerde",
+  },
+];
+---
+
+<section class="section" id="ozellikler" aria-labelledby="ozellikler-title" data-companion="green" data-companion-say="Hepsi tek yerde.">
+  <div class="page-width">
+    <SectionHead
+      color="green"
+      headingId="ozellikler-title"
+      eyebrow="Neler yapar?"
+      title="Hukuk sizde, gerisi Armağan'da."
+      lead="Tebligatı, süreyi, dosyayı, görevi ve takvimi o takip eder; siz işin hukukuna bakarsınız. Büroda da, duruşmada da."
+    />
+
+    <ul class="grid">
+      {
+        features.map(({ icon: Icon, color, title, text, href }, i) => (
+          <li data-reveal style={`--i:${i};--tone:var(--c-${color});--tone-ink:var(--c-${color}-ink)`}>
+            <a class="card" href={href}>
+              <Icon className="card__icon" aria-hidden="true" />
+              <h3>{title}</h3>
+              <p>{text}</p>
+              <span class="card__more">
+                Yakından bakın <LuArrowRight aria-hidden="true" />
+              </span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(72px, 9vw, 120px) 0 clamp(40px, 6vw, 72px);
+  }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .card {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    height: 100%;
+    padding: 24px 24px 22px;
+    overflow: hidden;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--glass);
+    color: var(--ink);
+    text-decoration: none;
+    transition:
+      border-color 0.25s,
+      box-shadow 0.25s,
+      transform 0.25s var(--ease-out);
+  }
+  /* Kartın köşesinde bölüm renginde hafif bir ışık */
+  .card::before {
+    content: "";
+    position: absolute;
+    top: -40%;
+    right: -30%;
+    width: 70%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--tone) 22%, transparent), transparent);
+    pointer-events: none;
+  }
+  .card:hover,
+  .card:focus-visible {
+    border-color: color-mix(in srgb, var(--tone) 45%, var(--line));
+    box-shadow: var(--glass-shadow);
+    transform: translateY(-2px);
+  }
+  .card :global(.card__icon) {
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 12px;
+    background: color-mix(in srgb, var(--tone) 16%, transparent);
+    color: var(--tone-ink);
+  }
+  .card h3 {
+    margin-top: 4px;
+    font: 650 19px/1.25 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .card p {
+    color: var(--ink-soft);
+    font-size: 15px;
+    line-height: 1.55;
+  }
+  .card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 4px;
+    color: var(--tone-ink);
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .card__more :global(svg) {
+    width: 15px;
+    height: 15px;
+    transition: transform 0.25s var(--ease-out);
+  }
+  .card:hover .card__more :global(svg) {
+    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .grid li {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.6s var(--ease-out),
+        transform 0.6s var(--ease-out);
+      transition-delay: calc(var(--i) * 70ms);
+    }
+    .grid li:global(.is-in) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (max-width: 960px) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .grid {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .card {
+      padding: 20px;
+    }
+  }
+</style>

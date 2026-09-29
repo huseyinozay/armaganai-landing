@@ -1,0 +1,210 @@
+---
+import { LuArrowRight, LuQuote } from "react-icons/lu";
+import Armagan from "../mascot/Armagan.astro";
+import { MASCOT_COLORS } from "../mascot/family";
+import { INVITE_URL, LOGIN_URL } from "../links";
+import { testimonials } from "./testimonials";
+import frostLight from "@assets/landing/wallpaper-light-blur.webp";
+import frostDark from "@assets/landing/wallpaper-dark-blur.webp";
+
+// Geçici yorumlar yalnızca geliştirme ortamında görünür (bkz. testimonials.ts).
+const quotes = testimonials.filter((t) => !t.placeholder || import.meta.env.DEV);
+---
+
+<section class="cta" id="davet" aria-labelledby="cta-title" data-companion="hide">
+  {
+    quotes.length > 0 && (
+      <div class="page-width quotes">
+        {quotes.map((t) => (
+          <figure class="quote">
+            <LuQuote className="quote__mark" aria-hidden="true" />
+            <blockquote>{t.quote}</blockquote>
+            <figcaption>
+              <b>{t.name}</b>
+              <span>{t.role}</span>
+              {t.placeholder && <em class="quote__demo">Örnek yorum</em>}
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    )
+  }
+
+  <div class="page-width">
+    <div class="box" data-cta>
+      <div class="box__bg" aria-hidden="true">
+        <img class="bg bg--light" src={frostLight.src} alt="" loading="lazy" />
+        <img class="bg bg--dark" src={frostDark.src} alt="" loading="lazy" />
+      </div>
+      <div class="family" data-cta-family aria-hidden="true">
+        {MASCOT_COLORS.map((color, i) => <Armagan color={color} flip={i % 2 === 1} />)}
+      </div>
+      <h2 id="cta-title">Büronuza bir Armağan.</h2>
+      <p>ArmağanAI davetli beta döneminde. Büronuzu tanıyalım, kurulumu birlikte yapalım.</p>
+      <div class="ctas">
+        <a class="btn btn--primary" href={INVITE_URL} data-cta-invite>Davet isteyin <LuArrowRight /></a>
+        <a class="btn btn--glass" href={LOGIN_URL}>Giriş yapın</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta {
+    padding: clamp(40px, 6vw, 80px) 0 clamp(88px, 10vw, 140px);
+  }
+
+  .quotes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: clamp(56px, 7vw, 96px);
+  }
+  .quote {
+    display: grid;
+    align-content: space-between;
+    gap: 18px;
+    margin: 0;
+    padding: 26px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: var(--glass);
+  }
+  .quote :global(.quote__mark) {
+    width: 24px;
+    height: 24px;
+    color: var(--c-green-ink);
+  }
+  blockquote {
+    margin: 0;
+    color: var(--ink);
+    font-size: 17px;
+    line-height: 1.55;
+  }
+  .quote figcaption {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 10px;
+    font-size: 14px;
+  }
+  .quote figcaption span {
+    color: var(--muted);
+  }
+  .quote__demo {
+    margin-left: auto;
+    padding: 3px 8px;
+    border: 1px dashed var(--line-strong);
+    border-radius: 999px;
+    color: var(--muted);
+    font-size: 11.5px;
+    font-style: normal;
+  }
+
+  .box {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    display: grid;
+    justify-items: center;
+    gap: 22px;
+    padding: clamp(56px, 8vw, 96px) clamp(20px, 5vw, 64px);
+    border-radius: var(--radius-xl);
+    border: 1px solid var(--glass-line);
+    text-align: center;
+    box-shadow: var(--glass-shadow);
+  }
+  .box__bg {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+  }
+  .box__bg::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+  }
+  .bg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.1);
+  }
+  .bg--dark,
+  :global(.dark) .bg--light {
+    display: none;
+  }
+  :global(.dark) .bg--dark {
+    display: block;
+  }
+  .family {
+    display: flex;
+    align-items: flex-end;
+  }
+  .family > :global(.armagan) {
+    width: clamp(64px, 8vw, 104px);
+    margin-left: -7px;
+  }
+  .family > :global(.armagan:first-child) {
+    margin-left: 0;
+  }
+  h2 {
+    font-size: clamp(38px, 6vw, 76px);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+  }
+  .box > p {
+    max-width: 560px;
+    color: var(--ink-soft);
+    font-size: clamp(16.5px, 1.4vw, 19px);
+    line-height: 1.55;
+  }
+  .ctas {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 6px;
+  }
+
+  @media (max-width: 900px) {
+    .quotes {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+  @media (max-width: 640px) {
+    .ctas {
+      width: 100%;
+    }
+    .ctas .btn {
+      flex: 1 1 100%;
+    }
+  }
+</style>
+
+<script>
+  import { mascotsIn } from "../mascot/engine";
+
+  // Davet düğmesine gelinince aile hep birlikte zıplar; kutu görününce bir kez selam verirler.
+  document.querySelectorAll<HTMLElement>("[data-cta]").forEach((box) => {
+    const family = mascotsIn(box.querySelector("[data-cta-family]")!);
+    const invite = box.querySelector<HTMLElement>("[data-cta-invite]");
+    const cheer = () => family.forEach((m, i) => window.setTimeout(() => m.hop(), i * 90));
+    invite?.addEventListener("pointerenter", () => {
+      cheer();
+      family.forEach((m) => m.lookAt(invite, 1400));
+    });
+    invite?.addEventListener("focus", cheer);
+    new IntersectionObserver(
+      ([entry], observer) => {
+        if (!entry.isIntersecting) return;
+        cheer();
+        observer.disconnect();
+      },
+      { threshold: 0.6 },
+    ).observe(box);
+  });
+</script>

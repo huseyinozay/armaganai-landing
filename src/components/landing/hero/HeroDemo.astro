@@ -1,0 +1,259 @@
+---
+// Hero'daki ürün turu: gerçek ArmağanAI ekranları (demo veriyle), `npm run screens` ile üretilir.
+import Armagan from "../mascot/Armagan.astro";
+import Stage, { type View } from "../screens/Stage.astro";
+import { facts } from "../screens/sources";
+
+const dayName = new Intl.DateTimeFormat("tr-TR", {
+  day: "numeric",
+  month: "long",
+  weekday: "long",
+  timeZone: "Europe/Istanbul",
+});
+
+// Görünüm, alt yazı, süre (ms) ve o anda öne çıkan Armağan.
+const tour: (View & { step: string; caption: string; dur: number; react: [string, string] })[] = [
+  {
+    frame: "home",
+    pointer: "toggle",
+    step: "Ana sayfa",
+    caption: "Günün işleri baloncuk görünümünde, bir bakışta…",
+    dur: 4200,
+    react: ["green", "wink"],
+  },
+  {
+    frame: "home-list",
+    step: "Sade görünüm",
+    caption: "…ya da tek tıkla sade liste görünümünde.",
+    dur: 3600,
+    react: ["green", "hop"],
+  },
+  {
+    frame: "notice-read",
+    focus: "card",
+    zoom: 1.25,
+    pointer: "created",
+    step: "Tebligat",
+    caption: "Tebligat okundu, süre kanundan hesaplandı; takvim kaydı ve görev açıldı.",
+    dur: 4300,
+    react: ["red", "hop"],
+  },
+  {
+    frame: "calendar",
+    focus: "deadline",
+    zoom: 1.3,
+    step: "Takvim",
+    caption: `Son gün takvimde: ${dayName.format(facts.deadline)}.`,
+    dur: 3700,
+    react: ["red", "hop"],
+  },
+  {
+    frame: "people",
+    step: "Görevler",
+    caption: "İşler kişilere dağıldı: herkesin haftası yan yana.",
+    dur: 3900,
+    react: ["yellow", "hop"],
+  },
+  {
+    frame: "chat-task",
+    focus: "panel",
+    zoom: 1.42,
+    step: "Asistan",
+    caption: "Asistana yazın: görevi atar, takvime ekler, dosyasına bağlar.",
+    dur: 4800,
+    react: ["green", "hop"],
+  },
+];
+const steps = tour.map(({ caption, dur, react }) => ({ caption, dur, react }));
+---
+
+<div class="demo" data-hero-demo>
+  <div class="perch" data-perch>
+    <Armagan color="green" eager />
+    <Armagan color="red" flip eager />
+    <Armagan color="purple" eager />
+    <Armagan color="yellow" flip eager />
+  </div>
+
+  <figure class="player" data-player data-steps={JSON.stringify(steps)}>
+    <Stage
+      views={tour}
+      label="ArmağanAI uygulamasından gerçek ekranlar: ana sayfanın baloncuk ve liste görünümü, tebligattan açılan kayıtlar, takvim, ekibin görevleri ve asistan sohbeti."
+    />
+
+    <figcaption class="caption">
+      <ol class="steps" aria-label="Ürün turu adımları">
+        {
+          tour.map((item, i) => (
+            <li>
+              <button
+                type="button"
+                class:list={["step", { "is-on": i === 0 }]}
+                data-step={i}
+                aria-label={`${i + 1}. adım: ${item.step}`}
+              >
+                <span class="step__bar">
+                  <span class="step__fill" />
+                </span>
+                <span class="step__label">{item.step}</span>
+              </button>
+            </li>
+          ))
+        }
+      </ol>
+      <p class="caption__text" data-caption aria-live="polite">{tour[0].caption}</p>
+    </figcaption>
+  </figure>
+  <p class="note">Gerçek ArmağanAI ekranları · kişi ve dosya bilgileri kurgusaldır.</p>
+</div>
+
+<style>
+  .demo {
+    --m: clamp(52px, 9.4cqi, 108px);
+    position: relative;
+    container-type: inline-size;
+  }
+
+  /* ---------- Armağan ailesi pencerenin üstünde ---------- */
+  .perch {
+    position: absolute;
+    z-index: 3;
+    left: 50%;
+    top: 0;
+    display: flex;
+    align-items: flex-end;
+    transform: translate(-50%, calc(-100% + var(--m) * 0.06));
+    pointer-events: none;
+  }
+  .perch > :global(.armagan) {
+    flex: none;
+    width: var(--m);
+    margin-left: calc(var(--m) * -0.07);
+    pointer-events: auto;
+  }
+  .perch > :global(.armagan:nth-child(1)) {
+    z-index: 1;
+    margin-left: 0;
+    margin-bottom: calc(var(--m) * 0.03);
+  }
+  .perch > :global(.armagan:nth-child(2)) {
+    z-index: 3;
+    width: calc(var(--m) * 0.95);
+  }
+  .perch > :global(.armagan:nth-child(3)) {
+    z-index: 4;
+    width: calc(var(--m) * 1.04);
+    margin-bottom: calc(var(--m) * 0.012);
+  }
+  .perch > :global(.armagan:nth-child(4)) {
+    z-index: 2;
+    width: calc(var(--m) * 0.97);
+    margin-bottom: calc(var(--m) * 0.035);
+  }
+
+  .player {
+    position: relative;
+    z-index: 2;
+    margin: 0;
+  }
+
+  /* ---------- Adımlar ve alt yazı ---------- */
+  .caption {
+    display: grid;
+    gap: 14px;
+    justify-items: center;
+    margin-top: 22px;
+  }
+  .steps {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 10px;
+    width: min(100%, 720px);
+  }
+  .step {
+    display: grid;
+    gap: 8px;
+    width: 100%;
+    padding: 4px 0;
+    border: 0;
+    background: none;
+    color: var(--muted);
+    font: 500 12.5px/1 var(--font-text);
+    text-align: left;
+    cursor: pointer;
+  }
+  .step__bar {
+    display: block;
+    height: 3px;
+    overflow: hidden;
+    border-radius: 99px;
+    background: color-mix(in srgb, var(--ink) 12%, transparent);
+  }
+  .step__fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: var(--ink);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+  }
+  .step.is-done .step__fill {
+    transform: scaleX(1);
+  }
+  .step.is-on {
+    color: var(--ink);
+  }
+  .step.is-on .step__fill {
+    animation: fill var(--dur, 3s) linear forwards;
+  }
+  .player.is-paused .step.is-on .step__fill {
+    animation: none;
+    transform: scaleX(1);
+  }
+  .step:hover {
+    color: var(--ink);
+  }
+  .caption__text {
+    min-height: 1.5em;
+    color: var(--ink-soft);
+    font-size: clamp(15px, 1.4vw, 17.5px);
+    font-weight: 500;
+    text-align: center;
+    transition: opacity 0.3s;
+  }
+  .caption__text.is-changing {
+    opacity: 0;
+  }
+  .note {
+    margin-top: 10px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+  }
+
+  @keyframes fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @container (max-width: 640px) {
+    .demo {
+      --m: clamp(46px, 16cqi, 76px);
+    }
+    .step__label {
+      display: none;
+    }
+    .steps {
+      gap: 6px;
+    }
+    .caption__text {
+      min-height: 3em;
+    }
+  }
+</style>
+
+<script>
+  import { runProductTour } from "./tour";
+  document.querySelectorAll<HTMLElement>("[data-hero-demo]").forEach(runProductTour);
+</script>

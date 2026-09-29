@@ -1,0 +1,192 @@
+---
+import {
+  LuFolderSearch,
+  LuListPlus,
+  LuCalendarRange,
+  LuShieldQuestion,
+  LuDatabase,
+  LuCalendarCheck,
+  LuSmartphone,
+  LuScale,
+} from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import FeatureTour, { type TourTab } from "../screens/FeatureTour.astro";
+
+// Gerçek sohbet ekranları (fixtures.cjs'teki konuşmalar). Metinler asistanın araçlarına göre yazıldı:
+// dosya/müvekkil/duruşma/görev/takvim sorguları, görev ve takvim kaydı açma, toplu atama.
+const tabs: TourTab[] = [
+  {
+    id: "dosyalar",
+    icon: LuFolderSearch,
+    title: "Müvekkilin dosyalarını getirir",
+    text: "“Kaya Tekstil'in açık dosyalarını getir” deyin; müvekkil ve dosya kartları gelir, dokununca açılır.",
+    screen: "Asistan sohbeti: Kaya Tekstil A.Ş. müvekkil kartı ve dört açık dosyanın kartları listeleniyor.",
+    frame: "chat-client",
+    focus: "panel",
+    zoom: 1.42,
+  },
+  {
+    id: "gorev",
+    icon: LuListPlus,
+    title: "Görevi ve takvim kaydını açar",
+    text: "Görevi kişiye atar, son günü takvime ekler; ikisini dosyasına ve birbirine bağlar.",
+    screen: "Asistan sohbeti: bilirkişi raporuna itiraz görevi Selin Kaya'ya atanıyor, takvim kaydı ekleniyor ve ikisi dosyaya bağlanıyor.",
+    frame: "chat-task",
+    focus: "panel",
+    zoom: 1.42,
+  },
+  {
+    id: "program",
+    icon: LuCalendarRange,
+    title: "Programınızı bilir",
+    text: "Bu haftanın duruşmalarını, toplantılarını ve görevlerini büronuzun kayıtlarından sayar.",
+    screen: "Asistan sohbeti: bu haftanın iki duruşması ve bir toplantısı kartlarla ve tabloyla gösteriliyor.",
+    frame: "chat",
+    focus: "panel",
+    zoom: 1.42,
+  },
+  {
+    id: "onay",
+    icon: LuShieldQuestion,
+    title: "Emin olmadan yapmaz",
+    text: "Toplu atamadan ve silmeden önce onay ister; hafta sonuna düşen adliye işini kaydetmeden size sorar.",
+    screen: "Asistan sohbeti: dört dosyaya sorumlu avukat atanmadan önce onay isteniyor, onaydan sonra atama yapılıyor.",
+    frame: "chat-check",
+    focus: "panel",
+    zoom: 1.42,
+  },
+];
+
+const points = [
+  { icon: LuDatabase, title: "Kayıtlarınızdan yanıt verir", text: "Bulamadığı bilgiyi uydurmaz." },
+  { icon: LuCalendarCheck, title: "Tarihi doğrular", text: "“Cuma” dediğinizde hangi Cuma olduğunu hesaplar." },
+  { icon: LuSmartphone, title: "Telefondan da", text: "Dışarıdayken yazın, kayıt takvimde hazır olsun." },
+  { icon: LuScale, title: "Hukuki görüş vermez", text: "Değerlendirme her zaman sizde kalır." },
+];
+
+const prompts = [
+  "Kaya Tekstil'in açık dosyalarını getir",
+  "2026/145'e kim atanmış?",
+  "Yarın takvimimde ne var?",
+  "Selin'e cumaya kadar dilekçe görevi ata",
+  "2025/318'deki bilirkişi raporunu bul",
+  "Bugün hangi tebligatlar geldi?",
+];
+---
+
+<section class="section" id="asistan" aria-labelledby="asistan-title" data-companion="green" data-companion-say="Bana yazabilirsiniz.">
+  <div class="page-width">
+    <SectionHead
+      color="green"
+      headingId="asistan-title"
+      eyebrow="Asistan · Beta"
+      title="Sorun, getirsin. Söyleyin, kaydetsin."
+      lead="Günlük dille yazın: müvekkilin dosyalarını getirir, duruşmalarınızı sayar, görevi ve takvim kaydını açıp dosyasına bağlar. Bilgisayardan da, telefondan da."
+    />
+
+    <FeatureTour
+      id="asistan"
+      tabs={tabs}
+      color="green"
+      reverse
+      listLabel="Asistanın yapabildikleri"
+      label="ArmağanAI Asistan'ın gerçek sohbet ekranları."
+    />
+
+    <ul class="points">
+      {
+        points.map(({ icon: Icon, title, text }) => (
+          <li>
+            <Icon className="points__icon" aria-hidden="true" />
+            <b>{title}</b>
+            <span>{text}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="prompts">
+      <p class="prompts__label">Örneğin:</p>
+      <ul aria-label="Örnek sorular">
+        {prompts.map((p) => <li>“{p}”</li>)}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .points {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+    margin-top: clamp(40px, 6vw, 72px);
+  }
+  .points li {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    column-gap: 12px;
+    row-gap: 2px;
+    align-items: start;
+    padding: 18px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--glass);
+  }
+  .points :global(.points__icon) {
+    grid-row: span 2;
+    width: 36px;
+    height: 36px;
+    padding: 8px;
+    border-radius: 10px;
+    background: color-mix(in srgb, var(--c-green) 16%, transparent);
+    color: var(--c-green-ink);
+  }
+  .points b {
+    font: 650 16px/1.3 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .points span {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.5;
+  }
+  .prompts {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 10px 14px;
+    margin-top: clamp(28px, 4vw, 44px);
+  }
+  .prompts__label {
+    color: var(--muted);
+    font: 500 12px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .prompts ul {
+    display: contents;
+  }
+  .prompts li {
+    padding: 9px 15px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--glass);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+
+  @media (max-width: 1100px) {
+    .points {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 600px) {
+    .points {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

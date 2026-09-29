@@ -1,0 +1,61 @@
+---
+import type { MascotColor } from "../mascot/family";
+
+interface Props {
+  eyebrow: string;
+  title: string;
+  lead?: string;
+  /** Bölümün Armağan'ı: üst etiketteki nokta bu renkte. */
+  color: MascotColor;
+  headingId: string;
+  align?: "center" | "left";
+}
+
+const { eyebrow, title, lead, color, headingId, align = "center" } = Astro.props;
+---
+
+<header class:list={["head", `head--${align}`]}>
+  <p class="head__eyebrow"><span style={`background:var(--c-${color})`}></span>{eyebrow}</p>
+  <h2 id={headingId}>{title}</h2>
+  {lead && <p class="head__lead">{lead}</p>}
+</header>
+
+<style>
+  .head {
+    display: grid;
+    gap: 18px;
+    max-width: 760px;
+    margin-bottom: clamp(40px, 6vw, 72px);
+  }
+  .head--center {
+    justify-items: center;
+    margin-inline: auto;
+    text-align: center;
+  }
+  .head__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink-soft);
+    font: 500 12px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .head__eyebrow span {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 8%, transparent);
+  }
+  h2 {
+    font-size: clamp(34px, 5.2vw, 62px);
+    font-weight: 650;
+    letter-spacing: -0.028em;
+  }
+  .head__lead {
+    max-width: 640px;
+    color: var(--ink-soft);
+    font-size: clamp(16.5px, 1.35vw, 19px);
+    line-height: 1.6;
+  }
+</style>

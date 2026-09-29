@@ -1,0 +1,57 @@
+---
+// Gerçek app ekranından kırpılmış bir bölüm (npm run screens ile üretilen <kare>--<hedef>.webp),
+// açık ve koyu tema karşılığıyla. Tek temalı görseller (örn. eklenti penceresi) `image` ile verilir.
+import { Picture } from "astro:assets";
+import { screenImage } from "./sources";
+
+interface Props {
+  /** Örn. "agenda--drawer" */
+  shot?: string;
+  image?: ImageMetadata;
+  alt: string;
+  sizes?: string;
+  class?: string;
+}
+
+const { shot, image, alt, sizes = "(min-width: 1000px) 480px, 92vw", class: className } = Astro.props;
+const light = image ?? screenImage(shot!, "light");
+const dark = image ? null : screenImage(shot!, "dark");
+const common = {
+  alt,
+  sizes,
+  widths: [480, 960, light.width].filter((w, i, all) => w <= light.width && all.indexOf(w) === i),
+  formats: ["avif"] as const,
+  fallbackFormat: "webp" as const,
+  quality: 70,
+  loading: "lazy" as const,
+  decoding: "async" as const,
+};
+---
+
+<div class:list={["shot", className]}>
+  <Picture class:list={["shot__img", { "shot__img--light": dark }]} src={light} {...common} />
+  {dark && <Picture class="shot__img shot__img--dark" src={dark} {...common} />}
+</div>
+
+<style>
+  .shot {
+    position: relative;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    box-shadow: 0 24px 50px -30px rgb(17 22 20 / 0.5);
+  }
+  .shot :global(.shot__img) {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+  .shot :global(.shot__img--dark),
+  :global(.dark) .shot :global(.shot__img--light) {
+    display: none;
+  }
+  :global(.dark) .shot :global(.shot__img--dark) {
+    display: block;
+  }
+</style>

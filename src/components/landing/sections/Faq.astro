@@ -1,0 +1,122 @@
+---
+import { LuPlus } from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+
+const faqs = [
+  {
+    q: "UYAP şifremi ya da e-imzamı veriyor muyum?",
+    a: "Hayır. Chrome eklentisi UYAP'a ve UETS'ye sizin tarayıcınızda açtığınız oturum üzerinden bağlanır. Şifreniz ve e-imzanız ArmağanAI'ya hiç gelmez.",
+  },
+  {
+    q: "Yapay zekâ yanılırsa ne olur?",
+    a: "Süreler yapay zekânın tahmini değildir; kanun maddesine bağlı kurallardan hesaplanır. Belgenin türü ya da tarihi okunamadığında süre üretilmez, tebligat “İnceleme gerekli” diye işaretlenir. Her yapay zekâ çıktısı “kontrol edin” notu taşır; son kontrol her zaman avukattadır.",
+  },
+  {
+    q: "Hangi tebligatları tanıyor?",
+    a: "Hukuk, ceza, icra ve idari yargının (vergi dahil) mahkeme ve icra dairesi belgelerini; ayrıca baro ve noter tebligatlarını tanır. Tanımadığı ya da emin olmadığı belgeyi incelemenize bırakır.",
+  },
+  {
+    q: "Tebligatlar ne zaman işleniyor?",
+    a: "“Tebligatları Senkronize Et”e bastığınızda yeni tebligatlar alınır ve Armağan hemen okur. Belgeler uçtan uca şifreli olduğu için işleme, uygulama tarayıcınızda açıkken yapılır.",
+  },
+  {
+    q: "Verilerim nasıl saklanıyor, kimler görebilir?",
+    a: "Verileriniz KVKK'ya uygun olarak saklanır. Evrak dosyaları tarayıcınızda şifrelenir ve büro anahtarı olmadan açılamaz. Büro içinde herkes kendi rolü kadarını görür; kişisel kayıtlar ve asistan sohbetleri kişiye özeldir.",
+  },
+  {
+    q: "Verilerim yapay zekâ eğitiminde kullanılıyor mu?",
+    a: "Hayır. Verileriniz hiçbir yapay zekâ modelinin eğitiminde kullanılmaz; bu, sağlayıcılarla yapılan veri işleme sözleşmeleriyle güvence altındadır.",
+  },
+  {
+    q: "Ekibimi ekleyebilir miyim?",
+    a: "Evet. Büro sahibi avukat, stajyer, katip ve sekreter davet eder; herkes kendi yetkisiyle çalışır. Görevler kişilere atanır, yorum ve evrakla ilerler; isterseniz onay zinciri kurulur.",
+  },
+  {
+    q: "Asistan neler yapabilir?",
+    a: "Dosyalarınızı, müvekkillerinizi, duruşmalarınızı, tebligatlarınızı, görevlerinizi ve takvim kayıtlarınızı sorabilirsiniz; görev ve takvim kaydı açtırıp kişilere atatabilirsiniz. Evrakın içeriğini okumaz, hukuki görüş vermez; toplu atamadan ve silmeden önce onay ister.",
+  },
+  {
+    q: "Telefondan kullanabilir miyim?",
+    a: "Evet. Telefonun ya da tabletin tarayıcısından girersiniz; isterseniz ana ekrana ekleyebilirsiniz. Dosyalar, takvim, görevler, tebligatlar, evrak önizleme ve asistan telefonda ve tablette çalışır; duruşmada dosyanın öncelikli evrakı elinizin altındadır. UYAP ve UETS senkronu ise bilgisayarda, Chrome eklentisiyle yapılır.",
+  },
+  {
+    q: "Google Takvim'le çalışıyor mu?",
+    a: "Evet. İsterseniz büronuzun takvim kayıtları Google hesabınızdaki ayrı bir ArmağanAI takvimine aktarılır. Aktarım tek yönlüdür ve kişisel kayıtlar aktarılmaz.",
+  },
+  {
+    q: "Nasıl başlayabilirim?",
+    a: "ArmağanAI şu an davetli beta döneminde. Davet isteyin; büronuzu tanıyalım ve kurulumu birlikte yapalım.",
+  },
+];
+---
+
+<section class="section" id="sss" aria-labelledby="sss-title" data-companion="green" data-companion-say="Sorunuz mu var?">
+  <div class="page-width faq">
+    <SectionHead color="green" headingId="sss-title" eyebrow="Sıkça sorulanlar" title="Aklınıza takılanlar." />
+    <div class="faq__list">
+      {
+        faqs.map(({ q, a }) => (
+          <details>
+            <summary>
+              <span>{q}</span>
+              <LuPlus className="faq__icon" aria-hidden="true" />
+            </summary>
+            <p>{a}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .faq__list {
+    display: grid;
+    gap: 10px;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  details {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--glass);
+    -webkit-backdrop-filter: blur(var(--blur));
+    backdrop-filter: blur(var(--blur));
+    transition: border-color 0.2s;
+  }
+  details[open] {
+    border-color: var(--line-strong);
+  }
+  summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 20px 22px;
+    cursor: pointer;
+    list-style: none;
+    font: 600 17px/1.35 var(--font-text);
+  }
+  summary::-webkit-details-marker {
+    display: none;
+  }
+  summary :global(.faq__icon) {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    color: var(--muted);
+    transition: transform 0.25s var(--ease-out);
+  }
+  details[open] summary :global(.faq__icon) {
+    transform: rotate(45deg);
+  }
+  details p {
+    padding: 0 22px 22px;
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.65;
+  }
+</style>

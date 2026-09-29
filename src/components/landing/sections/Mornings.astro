@@ -1,0 +1,182 @@
+---
+import { LuCheck } from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import AppShot from "../screens/AppShot.astro";
+
+const chores = [
+  "UYAP'a girip dosyaları ve yeni evrakı tek tek kontrol etmek",
+  "UETS'deki tebligatı okuyup süresini elle hesaplamak",
+  "Ajandaya yazıp hatırlatma kurmak",
+  "Kime hangi işin düştüğünü tek tek söylemek",
+  "Bir dosyanın bilgisini bulmak için ekran ekran gezmek",
+  "Duruşmaya kalın dosyalar taşımak",
+];
+---
+
+<section class="section" id="neden" aria-labelledby="neden-title" data-companion="yellow" data-companion-say="Günün programı hazır!">
+  <div class="page-width">
+    <SectionHead
+      color="yellow"
+      headingId="neden-title"
+      eyebrow="Her sabah"
+      title="Aynı sabah, iki farklı büro."
+      lead="Çoğu büroda gün hâlâ elle başlıyor: portal portal gezmek, süre hesaplamak, iş dağıtmak, dosya aramak. Armağan'la hepsi sabahın ilk dakikasında önünüzde."
+    />
+
+    <div class="compare" data-reveal>
+      <article class="side side--without">
+        <header>
+          <span class="tag">Armağan'sız</span>
+          <span class="meta">Her dosya için, her sabah</span>
+        </header>
+        <ol class="chores">
+          {chores.map((text, i) => <li style={`--i:${i}`}><span class="box" aria-hidden="true" />{text}</li>)}
+        </ol>
+      </article>
+
+      <article class="side side--with">
+        <header>
+          <span class="tag tag--on"><LuCheck aria-hidden="true" /> Armağan'lı</span>
+          <span class="meta">Her sabah, tek ekranda</span>
+        </header>
+        <AppShot
+          shot="agenda--drawer"
+          class="with__shot"
+          sizes="(min-width: 1000px) 460px, 90vw"
+          alt="ArmağanAI Günün Programı: günün takip işi, duruşması, toplantısı ve randevusu; UETS, UYAP ve yapay zekâ kaynak rozetleriyle."
+        />
+        <p class="with__note">
+          Tebligatlar okunmuş, süreler takvimde, işler sahiplerinde; dosyalar telefonunuzda. Sorunuz olursa
+          Armağan'a yazın.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .compare {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    gap: clamp(20px, 3vw, 36px);
+    align-items: stretch;
+  }
+  .side {
+    display: grid;
+    align-content: start;
+    gap: 22px;
+    padding: clamp(22px, 3vw, 34px);
+    border-radius: var(--radius-lg);
+  }
+  .side header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--ink) 7%, transparent);
+    font: 600 14px/1 var(--font-text);
+  }
+  .tag :global(svg) {
+    width: 15px;
+    height: 15px;
+  }
+  .tag--on {
+    background: color-mix(in srgb, var(--c-yellow) 26%, transparent);
+    color: var(--ink);
+  }
+  .meta {
+    color: var(--muted);
+    font: 500 12px/1.2 var(--font-mono);
+    letter-spacing: 0.04em;
+  }
+
+  .side--without {
+    border: 1px dashed var(--line-strong);
+    background:
+      repeating-linear-gradient(0deg, transparent 0 31px, color-mix(in srgb, var(--ink) 5%, transparent) 31px 32px),
+      color-mix(in srgb, var(--surface) 55%, transparent);
+  }
+  .chores {
+    display: grid;
+    gap: 6px;
+    counter-reset: chore;
+  }
+  .chores li {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 12px 4px;
+    color: var(--ink-soft);
+    font-size: 16.5px;
+    line-height: 1.45;
+  }
+  .box {
+    flex: none;
+    width: 20px;
+    height: 20px;
+    margin-top: 1px;
+    border: 1.5px solid var(--line-strong);
+    border-radius: 6px;
+  }
+
+  .side--with {
+    border: 1px solid var(--glass-line);
+    background:
+      radial-gradient(120% 80% at 100% 0%, color-mix(in srgb, var(--c-yellow) 18%, transparent), transparent 60%),
+      var(--glass);
+    -webkit-backdrop-filter: blur(var(--blur)) saturate(160%);
+    backdrop-filter: blur(var(--blur)) saturate(160%);
+    box-shadow: var(--glass-shadow);
+  }
+  .side--with :global(.with__shot) {
+    max-width: 460px;
+    width: 100%;
+    justify-self: center;
+  }
+  .with__note {
+    color: var(--ink);
+    font-size: 17px;
+    font-weight: 500;
+    line-height: 1.5;
+  }
+
+  /* Görünür olunca: yapılacaklar tek tek belirir, Armağan'lı taraf sonra gelir. */
+  @media (prefers-reduced-motion: no-preference) {
+    .compare .chores li,
+    .compare .side--with {
+      opacity: 0;
+      transform: translateY(14px);
+      transition:
+        opacity 0.6s var(--ease-out),
+        transform 0.6s var(--ease-out);
+    }
+    .compare .chores li {
+      transition-delay: calc(var(--i) * 110ms);
+    }
+    .compare .side--with {
+      transition-delay: 0.75s;
+    }
+    .compare:global(.is-in) .chores li,
+    .compare:global(.is-in) .side--with {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .compare {
+      grid-template-columns: minmax(0, 1fr);
+    }
+  }
+</style>

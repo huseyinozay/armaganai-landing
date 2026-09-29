@@ -1,0 +1,64 @@
+---
+import "@fontsource-variable/bricolage-grotesque/opsz.css";
+import "@fontsource-variable/geist";
+import "@fontsource-variable/geist-mono";
+import "@/styles/landing.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const {
+  title = "ArmağanAI — Yeni ekip arkadaşınız: Armağan",
+  description = "Armağan, hukuk bürolarına katılan yapay zekâ ekip arkadaşı. UYAP ve UETS'le çalışır; tebligatın, sürenin, dosyanın, görevin ve takvimin takibi onda, karar her zaman avukatta.",
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+---
+
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f3f4f1" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0b0d0c" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="tr_TR" />
+    <meta property="og:site_name" content="ArmağanAI" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+
+    <!-- Tema, boyamadan önce belirlenir; diğer sayfalarla aynı "theme" anahtarını kullanır. -->
+    <script is:inline>
+      (() => {
+        let saved = null;
+        try {
+          saved = localStorage.getItem("theme");
+        } catch {}
+        const dark =
+          saved === "dark" ||
+          (saved !== "light" && window.matchMedia("(prefers-color-scheme: dark)").matches);
+        document.documentElement.classList.toggle("dark", dark);
+      })();
+    </script>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
