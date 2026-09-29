@@ -1,9 +1,63 @@
 ---
-import { getIndex } from "@lib/contentParser";
-import EntryLayout from "@components/home/EntryLayout.astro";
-import type { HomeEntry } from "@/types";
-
-const entry = (await getIndex("home")) as HomeEntry;
+import LandingLayout from "@components/landing/LandingLayout.astro";
+import Header from "@components/landing/Header.astro";
+import Hero from "@components/landing/Hero.astro";
+import Features from "@components/landing/sections/Features.astro";
+import Mornings from "@components/landing/sections/Mornings.astro";
+import HowItWorks from "@components/landing/sections/HowItWorks.astro";
+import NoticeFlow from "@components/landing/sections/NoticeFlow.astro";
+import Uyap from "@components/landing/sections/Uyap.astro";
+import Mobile from "@components/landing/sections/Mobile.astro";
+import Assistant from "@components/landing/sections/Assistant.astro";
+import Tasks from "@components/landing/sections/Tasks.astro";
+import CalendarSection from "@components/landing/sections/Calendar.astro";
+import Security from "@components/landing/sections/Security.astro";
+import Faq from "@components/landing/sections/Faq.astro";
+import FinalCta from "@components/landing/sections/FinalCta.astro";
+import Companion from "@components/landing/companion/Companion.astro";
+import Footer from "@components/landing/Footer.astro";
 ---
 
-<EntryLayout entry={entry} />
+<LandingLayout>
+  <a class="skip-link" href="#main-content">İçeriğe geç</a>
+  <Header />
+  <main id="main-content">
+    <Hero />
+    <Features />
+    <Mornings />
+    <NoticeFlow />
+    <Assistant />
+    <Tasks />
+    <CalendarSection />
+    <Uyap />
+    <Mobile />
+    <HowItWorks />
+    <Security />
+    <Faq />
+    <FinalCta />
+  </main>
+  <Companion />
+  <Footer />
+</LandingLayout>
+
+<style>
+  .skip-link {
+    position: absolute;
+    left: 16px;
+    top: -60px;
+    z-index: 100;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--ink);
+    color: var(--bg);
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .skip-link:focus {
+    top: 12px;
+  }
+</style>
+
+<script>
+  import "@components/landing/reveal";
+</script>

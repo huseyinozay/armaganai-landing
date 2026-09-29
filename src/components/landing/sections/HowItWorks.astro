@@ -1,0 +1,240 @@
+---
+import { LuArrowUpRight } from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import AppShot from "../screens/AppShot.astro";
+import popupUyap from "@assets/landing/extension/popup-uyap.webp";
+import { EXTENSION_URL } from "../links";
+---
+
+<section
+  class="section"
+  id="nasil-calisir"
+  aria-labelledby="nasil-title"
+  data-companion="green"
+  data-companion-say="Üç adım, gerisi bende."
+>
+  <div class="page-width">
+    <SectionHead
+      color="green"
+      headingId="nasil-title"
+      eyebrow="Kurulum"
+      title="Üç adım. Sonrası kendiliğinden."
+      lead="ArmağanAI, Chrome eklentisiyle UYAP'a ve UETS'ye sizin oturumunuz üzerinden bağlanır. Kurulum bir kez yapılır; her sabah tek tık yeter."
+    />
+
+    <ol class="how" data-reveal>
+      <li class="how__step" style="--i:0">
+        <span class="how__n">1</span>
+        <h3>Eklentiyi kurun</h3>
+        <p>
+          Chrome eklentisi UYAP'a ve UETS'ye kendi oturumunuzla bağlanır. Şifrenizi ya da e-imzanızı
+          bizimle paylaşmazsınız.
+        </p>
+        <div class="how__screen how__screen--dark">
+          <AppShot
+            image={popupUyap}
+            class="how__shot how__shot--popup"
+            sizes="(min-width: 1000px) 300px, 70vw"
+            alt="ArmağanAI Chrome eklentisi: UYAP bağlı, 1247 dosya, haftanın 6 duruşması, Senkronize Et düğmesi."
+          />
+        </div>
+        <a class="how__link" href={EXTENSION_URL} target="_blank" rel="noopener">
+          Chrome Web Mağazası <LuArrowUpRight aria-hidden="true" />
+        </a>
+      </li>
+
+      <li class="how__step" style="--i:1">
+        <span class="how__n">2</span>
+        <h3>Senkronize edin</h3>
+        <p>
+          Dosyalar, taraflar, evraklar, duruşmalar ve tebligatlar tek tıkla gelir. Bağlantı durumu
+          her an üst barda görünür.
+        </p>
+        <div class="how__screen how__screen--stack">
+          <AppShot
+            shot="navbar--sync"
+            class="how__shot"
+            sizes="(min-width: 1000px) 360px, 90vw"
+            alt="ArmağanAI üst barı: UYAP ve UETS bağlı, bildirim zili, Son 20 tebligatı yeniden kontrol et düğmesi."
+          />
+          <AppShot
+            shot="bell--sync"
+            class="how__shot how__shot--bell"
+            sizes="(min-width: 1000px) 300px, 80vw"
+            alt="Bildirimler: son tebligat senkronizasyonunda 6 tebligat alındı."
+          />
+        </div>
+      </li>
+
+      <li class="how__step" style="--i:2">
+        <span class="how__n">3</span>
+        <h3>Kontrol edin</h3>
+        <p>
+          Armağan tebligatı okur, süreyi hesaplar, takvim kaydını ve görevi açar. Her çıktıda
+          “kontrol edin” notu vardır; son söz sizdedir.
+        </p>
+        <div class="how__screen">
+          <AppShot
+            shot="notice-read--card"
+            class="how__shot how__shot--card"
+            sizes="(min-width: 1000px) 300px, 80vw"
+            alt="Yapay zekâ analizi tamamlanmış tebligat kartı: bu tebligattan 1 takvim kaydı ve 1 görev oluşturuldu."
+          />
+        </div>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .how {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(16px, 2.4vw, 28px);
+  }
+  /* Adımları bağlayan çizgi; görünür olunca soldan sağa dolar. */
+  .how::before,
+  .how::after {
+    content: "";
+    position: absolute;
+    top: 21px;
+    left: calc(100% / 6);
+    right: calc(100% / 6);
+    height: 2px;
+    border-radius: 2px;
+  }
+  .how::before {
+    background: repeating-linear-gradient(90deg, var(--line-strong) 0 8px, transparent 8px 14px);
+  }
+  .how::after {
+    background: var(--c-green);
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: transform 1.6s var(--ease-out) 0.2s;
+  }
+  .how:global(.is-in)::after {
+    transform: scaleX(1);
+  }
+  .how__step {
+    position: relative;
+    display: grid;
+    grid-template-rows: auto auto 1fr auto auto;
+    justify-items: center;
+    gap: 12px;
+    text-align: center;
+  }
+  .how__n {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--ink);
+    color: var(--bg);
+    font: 700 18px/1 var(--font-display);
+    box-shadow: 0 0 0 6px var(--bg);
+  }
+  h3 {
+    margin-top: 6px;
+    font-size: clamp(22px, 2vw, 26px);
+    font-weight: 650;
+    letter-spacing: -0.02em;
+  }
+  .how__step p {
+    max-width: 340px;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    line-height: 1.55;
+  }
+  .how__screen {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    min-height: 330px;
+    margin-top: 8px;
+    padding: 22px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--glass-line);
+    background:
+      radial-gradient(100% 70% at 50% 0%, color-mix(in srgb, var(--c-green) 14%, transparent), transparent 70%),
+      var(--glass);
+    box-shadow: var(--glass-shadow);
+  }
+  .how__screen--stack {
+    gap: 16px;
+    align-content: center;
+  }
+  .how__screen :global(.how__shot--bell) {
+    max-width: 280px;
+  }
+  .how__screen--dark {
+    background:
+      radial-gradient(100% 70% at 50% 0%, rgb(52 211 153 / 0.22), transparent 70%),
+      #0f1311;
+    border-color: rgb(255 255 255 / 0.08);
+  }
+  .how__screen :global(.how__shot) {
+    width: 100%;
+  }
+  .how__screen :global(.how__shot--popup) {
+    max-width: 280px;
+    border-color: rgb(255 255 255 / 0.1);
+  }
+  .how__screen :global(.how__shot--card) {
+    max-width: 250px;
+  }
+  .how__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--ink);
+    font-size: 14.5px;
+    font-weight: 600;
+    text-decoration: none;
+    border-bottom: 1.5px solid var(--c-green);
+  }
+  .how__link :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .how__step {
+      opacity: 0;
+      transform: translateY(18px);
+      transition:
+        opacity 0.7s var(--ease-out),
+        transform 0.7s var(--ease-out);
+      transition-delay: calc(var(--i) * 160ms);
+    }
+    .how:global(.is-in) .how__step {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .how::after {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .how {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 56px;
+    }
+    .how::before,
+    .how::after {
+      display: none;
+    }
+    .how__screen {
+      min-height: 0;
+    }
+  }
+</style>

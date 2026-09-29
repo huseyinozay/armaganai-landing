@@ -1,0 +1,232 @@
+---
+import {
+  LuFileLock2,
+  LuKeyRound,
+  LuScale,
+  LuBrainCircuit,
+  LuPlug,
+  LuUserCheck,
+  LuEyeOff,
+  LuTimer,
+} from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import Armagan from "../mascot/Armagan.astro";
+import { MASCOT_COLORS } from "../mascot/family";
+
+const facts = [
+  {
+    icon: LuFileLock2,
+    title: "Tarayıcıda şifreleme",
+    text: "Evrak dosyaları cihazınızda şifrelenir ve depoya şifreli hâliyle gider. Büro anahtarı olmadan açılamaz.",
+  },
+  {
+    icon: LuKeyRound,
+    title: "Anahtar sizde",
+    text: "Büronuza özel güvenlik anahtarı kurulumda size verilir, bizde durmaz. Ekibe katılan üyeye erişimi siz tanımlarsınız.",
+  },
+  {
+    icon: LuScale,
+    title: "KVKK'ya uygun",
+    text: "Verileriniz Kişisel Verilerin Korunması Kanunu'na uygun olarak saklanır ve işlenir.",
+  },
+  {
+    icon: LuBrainCircuit,
+    title: "Model eğitimi yok",
+    text: "Verileriniz hiçbir yapay zekâ modelinin eğitiminde kullanılmaz; bu, sağlayıcı sözleşmeleriyle güvence altındadır.",
+  },
+  {
+    icon: LuPlug,
+    title: "UYAP şifreniz bizde değil",
+    text: "Eklenti UYAP'a ve UETS'ye kendi oturumunuzla bağlanır. Şifre ya da e-imza paylaşmazsınız.",
+  },
+  {
+    icon: LuEyeOff,
+    title: "Adlar kayda geçmez",
+    text: "Taraf adları ve arama metinleri sistem kayıtlarına yazılmaz; e-postalarda kimlik bilgileri maskelenir.",
+  },
+  {
+    icon: LuUserCheck,
+    title: "Rol ve yetki",
+    text: "Yönetici avukat, avukat, stajyer, katip ve sekreter kendi yetkisiyle çalışır. Kişisel kayıtlar ve sohbetler kişiye özeldir.",
+  },
+  {
+    icon: LuTimer,
+    title: "Oturum güvenliği",
+    text: "Bir saat hareketsizlikte oturum kilitlenir; şifre değişince bütün cihazlardaki oturumlar kapanır.",
+  },
+];
+---
+
+<section class="security" id="guvenlik" aria-labelledby="guvenlik-title" data-companion="hide" data-security>
+  <div class="page-width">
+    <div class="family" data-security-family aria-hidden="true">
+      {MASCOT_COLORS.map((color, i) => <Armagan color={color} flip={i % 2 === 1} />)}
+      <p class="family__say" data-security-say>Şifreli evrakı biz de açamayız.</p>
+    </div>
+
+    <SectionHead
+      color="purple"
+      headingId="guvenlik-title"
+      eyebrow="Güvenlik ve KVKK"
+      title="Evrakınız, büronuzun anahtarıyla kilitli."
+      lead="Evrak dosyaları sizin tarayıcınızda şifrelenir; büro anahtarı olmadan kimse açamaz, biz de. Verileriniz KVKK'ya uygun olarak saklanır, yapay zekâ modellerinin eğitiminde kullanılmaz."
+    />
+
+
+    <ul class="facts">
+      {
+        facts.map(({ icon: Icon, title, text }) => (
+          <li>
+            <Icon className="facts__icon" aria-hidden="true" />
+            <h3>{title}</h3>
+            <p>{text}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="fine">
+      Uçtan uca şifreleme evrak dosyalarını kapsar. Dava ve müvekkil bilgileri, görev ve takvim kayıtları da
+      şifreli olarak, KVKK'ya uygun şekilde saklanır. Tebligat yapay zekâ ile okunurken belge yalnızca işlem
+      süresince açılır.
+      Ayrıntılar <a href="/privacy">Aydınlatma Metni</a>'nde.
+    </p>
+  </div>
+</section>
+
+<style>
+  .security {
+    /* Bu bölüm her iki temada da koyu: kasa hissi. */
+    --bg: #0b0d0c;
+    --surface: #151917;
+    --ink: #eef2ef;
+    --ink-soft: #b9c3be;
+    --muted: #8a9690;
+    --line: rgb(255 255 255 / 0.09);
+    --line-strong: rgb(255 255 255 / 0.16);
+    position: relative;
+    overflow: hidden;
+    padding: clamp(96px, 12vw, 160px) 0;
+    background:
+      radial-gradient(60% 50% at 50% 0%, rgb(181 88 240 / 0.22), transparent 70%),
+      radial-gradient(40% 40% at 90% 100%, rgb(59 232 90 / 0.1), transparent 70%),
+      var(--bg);
+    color: var(--ink);
+    color-scheme: dark;
+  }
+
+  /* Aile: bölüm görününce sırayla gözlerini kapatır. */
+  .family {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    margin: 0 auto 28px;
+  }
+  .family > :global(.armagan) {
+    width: clamp(64px, 7vw, 92px);
+    margin-left: -6px;
+  }
+  .family > :global(.armagan:first-child) {
+    margin-left: 0;
+  }
+  .family__say {
+    position: absolute;
+    left: calc(50% + clamp(140px, 15vw, 200px));
+    top: 12%;
+    width: max-content;
+    max-width: 220px;
+    padding: 10px 14px;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 16px 16px 16px 4px;
+    background: rgb(30 33 32 / 0.92);
+    color: var(--ink);
+    font: 500 14px/1.4 var(--font-text);
+    opacity: 0;
+    transform: translateY(6px);
+    transition:
+      opacity 0.4s ease 0.9s,
+      transform 0.5s var(--ease-out) 0.9s;
+  }
+  .family:global(.is-shy) .family__say {
+    opacity: 1;
+    transform: none;
+  }
+
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+  .facts li {
+    display: grid;
+    align-content: start;
+    gap: 10px;
+    padding: 22px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    background: rgb(255 255 255 / 0.03);
+  }
+  .facts :global(.facts__icon) {
+    width: 22px;
+    height: 22px;
+    color: var(--c-purple);
+  }
+  .facts h3 {
+    font: 650 17px/1.25 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  .facts p {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+  .fine {
+    max-width: 780px;
+    margin: clamp(32px, 4vw, 48px) auto 0;
+    color: var(--muted);
+    font-size: 13.5px;
+    line-height: 1.6;
+    text-align: center;
+  }
+  .fine a {
+    color: var(--ink-soft);
+  }
+
+  @media (max-width: 1000px) {
+    .facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 640px) {
+    .facts {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .family__say {
+      display: none;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .family__say {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { mascotsIn } from "../mascot/engine";
+
+  // Bölüm ekrana girince aile sırayla gözlerini kapatır, çıkınca açar.
+  document.querySelectorAll<HTMLElement>("[data-security-family]").forEach((family) => {
+    const members = mascotsIn(family);
+    new IntersectionObserver(
+      ([entry]) => {
+        const shy = entry.isIntersecting;
+        family.classList.toggle("is-shy", shy);
+        members.forEach((m, i) => window.setTimeout(() => m.shy(shy), shy ? i * 140 : (3 - i) * 80));
+      },
+      { rootMargin: "-25% 0px -25% 0px" },
+    ).observe(family);
+  });
+</script>

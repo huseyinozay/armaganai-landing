@@ -1,0 +1,83 @@
+---
+import { CONTACT_EMAIL, LOGIN_URL } from "./links";
+
+const year = new Date().getFullYear();
+const links = [
+  { label: "Hakkında", href: "/about" },
+  { label: "Blog", href: "/blog" },
+  { label: "Giriş yapın", href: LOGIN_URL },
+  { label: "Kullanım Koşulları", href: "/terms" },
+  { label: "Aydınlatma Metni", href: "/privacy" },
+];
+---
+
+<footer class="footer">
+  <div class="page-width inner">
+    <div class="about">
+      <a class="brand" href="/">
+        <span class="brand-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+        <span>ArmağanAI</span>
+      </a>
+      <p>Avukatın elini hafifleten büro asistanı.</p>
+    </div>
+    <nav aria-label="Alt bağlantılar">
+      {links.map((link) => <a href={link.href}>{link.label}</a>)}
+      <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+    </nav>
+    <p class="legal">© {year} ArmağanAI</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    border-top: 1px solid var(--line);
+    padding: 44px 0 36px;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+  .inner {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 24px 40px;
+    align-items: start;
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--ink);
+    font: 700 18px/1 var(--font-display);
+    letter-spacing: -0.02em;
+    text-decoration: none;
+  }
+  .about p {
+    margin-top: 10px;
+  }
+  nav {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px 22px;
+  }
+  nav a {
+    text-decoration: none;
+  }
+  nav a:hover {
+    color: var(--ink);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .legal {
+    grid-column: 1 / -1;
+    color: var(--muted);
+    font-size: 13px;
+  }
+  @media (max-width: 720px) {
+    .inner {
+      grid-template-columns: 1fr;
+    }
+    nav {
+      justify-content: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,147 @@
+---
+import {
+  LuUsers,
+  LuClipboardList,
+  LuBadgeCheck,
+  LuSlidersHorizontal,
+  LuChartColumn,
+  LuMailOpen,
+  LuCalendarPlus,
+  LuMessageSquarePlus,
+  LuMessagesSquare,
+  LuBell,
+} from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import FeatureTour, { type TourTab } from "../screens/FeatureTour.astro";
+
+// Görevlendirme: metinler app'in görev akışına göre (atananlar, alt görevler, yorum, evrak,
+// sıralı onay, kişi görünümü, raporlar). Görev bildirimleri uygulama içidir.
+const tabs: TourTab[] = [
+  {
+    id: "kisi",
+    icon: LuUsers,
+    title: "Herkesin haftası yan yana",
+    text: "Kişi görünümünde her üyenin haftası ayrı sütunda; kimin neyle uğraştığı, neyin bittiği bir bakışta.",
+    screen: "Görevler, kişi görünümü: beş ekip üyesinin haftalık görevleri yan yana sütunlarda.",
+    frame: "people",
+  },
+  {
+    id: "kart",
+    icon: LuClipboardList,
+    title: "Görev kartında her şey",
+    text: "Dosyası, bağlı takvim kaydı, evrakı, alt görevleri ve yorumları tek kartta. Yorumdan tek tıkla alt görev açılır.",
+    screen: "Görev kartı: istinaf dilekçesi taslağı eki, bağlı son gün kaydı, tamamlanan iki alt görev ve üç yorum.",
+    frame: "task-detail-more",
+    focus: "left",
+    zoom: 1.4,
+  },
+  {
+    id: "onay",
+    icon: LuBadgeCheck,
+    title: "Onayla ilerler",
+    text: "Atanan kişi işi onaya gönderir; onaycılar sırayla onaylar, son onayla görev kendiliğinden tamamlanır.",
+    screen: "Görev kartı: onay bekliyor (1/2), Onayla ve Reddet düğmeleri; atanan stajyer, son tarih ve görev tipi.",
+    frame: "task-detail",
+    focus: "approval",
+    zoom: 1.9,
+  },
+  {
+    id: "kurallar",
+    icon: LuSlidersHorizontal,
+    title: "Kurallar sizde",
+    text: "Hangi iş türü onaya gider, onay kimlerden geçer, tebligat e-postası kime gider: Büro Yönetimi'nden siz belirlersiniz.",
+    screen: "Büro Yönetimi: onay gerektiren görev tipleri, iki kişilik onay zinciri ve UETS bildirim alıcıları.",
+    frame: "firm",
+  },
+  {
+    id: "rapor",
+    icon: LuChartColumn,
+    title: "İş yükü raporda",
+    text: "Görevlerin durumu, atanan ve oluşturan bazında; bir çubuğa tıklayın, arkasındaki kayıtları görün.",
+    screen: "Raporlar: bu haftanın görevleri; durum dağılımı, atanan ve oluşturan bazında çubuklar.",
+    frame: "reports",
+  },
+];
+
+const sources = [
+  { icon: LuMailOpen, text: "Tebligattan: dosyanın sorumlularına" },
+  { icon: LuCalendarPlus, text: "Takvim kaydından: içeriğiyle" },
+  { icon: LuMessageSquarePlus, text: "Yorumdan: alt görev olarak" },
+  { icon: LuMessagesSquare, text: "Asistandan: “Selin'e ata” demeniz yeter" },
+  { icon: LuBell, text: "Atanana uygulama içinde bildirim" },
+];
+---
+
+<section class="section" id="gorevler" aria-labelledby="gorevler-title" data-companion="yellow" data-companion-say="İşi dağıttım.">
+  <div class="page-width">
+    <SectionHead
+      color="yellow"
+      headingId="gorevler-title"
+      eyebrow="Görevlendirme"
+      title="İşi dağıtın, takibi Armağan'a bırakın."
+      lead="Görevi kişiye atayın, dosyasına bağlayın, onayla ilerletin. Kimin neyle uğraştığını, neyin bittiğini ve neyin onay beklediğini tek yerden görün."
+    />
+
+    <FeatureTour
+      id="gorevler"
+      tabs={tabs}
+      color="yellow"
+      listLabel="Görevlendirme"
+      label="ArmağanAI'da görevler: kişi görünümü, görev kartı, onay, büro kuralları ve raporlar."
+    />
+
+    <div class="sources">
+      <p class="sources__label">Görev nereden gelir?</p>
+      <ul>
+        {
+          sources.map(({ icon: Icon, text }) => (
+            <li>
+              <Icon aria-hidden="true" />
+              {text}
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .sources {
+    display: grid;
+    justify-items: center;
+    gap: 14px;
+    margin-top: clamp(36px, 5vw, 60px);
+  }
+  .sources__label {
+    color: var(--muted);
+    font: 500 12px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .sources ul {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+  .sources li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 9px 15px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--glass);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .sources li :global(svg) {
+    width: 16px;
+    height: 16px;
+    color: var(--c-yellow-ink);
+  }
+</style>

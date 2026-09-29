@@ -1,0 +1,202 @@
+---
+import { EYES, MASCOT_TINT, type MascotColor } from "./family";
+import { MASCOT_ART } from "./assets";
+
+interface Props {
+  color: MascotColor;
+  /** Aynalanmış duruş (ailede sırayla sağa-sola bakmaları için). */
+  flip?: boolean;
+  /** İlk ekranda görünenler için true. */
+  eager?: boolean;
+  class?: string;
+  id?: string;
+}
+
+const { color, flip = false, eager = false, class: className, id } = Astro.props;
+const art = MASCOT_ART[color];
+const tint = MASCOT_TINT[color];
+const pct = (n: number) => `${(n * 100).toFixed(3)}%`;
+const loading = eager ? "eager" : "lazy";
+---
+
+<div
+  class:list={["armagan", className]}
+  id={id}
+  data-armagan={color}
+  style={`--glow:${tint.glow};--lid:${tint.lid}`}
+  aria-hidden="true"
+>
+  <div class="armagan__rig">
+    <img
+      class="armagan__body"
+      src={art.body.src}
+      width={art.body.width}
+      height={art.body.height}
+      alt=""
+      draggable="false"
+      loading={loading}
+      decoding="async"
+      style={flip ? "transform:scaleX(-1)" : undefined}
+    />
+    {
+      EYES.map((eye) => (
+        <div
+          class="armagan__eye"
+          style={`left:${pct(flip ? 1 - eye.x : eye.x)};top:${pct(eye.y)};width:${pct(eye.w)};height:${pct(eye.h)};--iw:${pct(eye.iw)}`}
+        >
+          <div class="armagan__iris">
+            <img src={art.iris.src} alt="" draggable="false" loading={loading} decoding="async" />
+          </div>
+          <div class="armagan__lid" />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .armagan {
+    position: relative;
+    isolation: isolate;
+    aspect-ratio: 1268 / 1336;
+    transform-origin: 50% 100%;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+  }
+  .armagan.is-hop {
+    animation: armagan-hop 0.64s cubic-bezier(0.3, 0.8, 0.4, 1);
+  }
+  @keyframes armagan-hop {
+    0% {
+      transform: translateY(0) scale(1, 1);
+    }
+    18% {
+      transform: translateY(0) scale(1.05, 0.92);
+    }
+    48% {
+      transform: translateY(-13%) scale(0.97, 1.05);
+    }
+    78% {
+      transform: translateY(0) scale(1.04, 0.95);
+    }
+    100% {
+      transform: translateY(0) scale(1, 1);
+    }
+  }
+  /* Gövde her karede kıpırdar: kendi GPU katmanında kayar, içerik yeniden çizilmez.
+     Parlama ve gölge bu yüzden CSS filtresi değil, bir kez çizilen gradyanlar. */
+  .armagan__rig {
+    position: absolute;
+    inset: 0;
+    transform-origin: 50% 74%;
+    transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+  .armagan__rig::before {
+    content: "";
+    position: absolute;
+    inset: -5% -6% -3%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--glow) 42%, transparent) 78%,
+      transparent 100%
+    );
+  }
+  :global(.dark) .armagan__rig::before {
+    inset: -8% -9% -5%;
+    background: radial-gradient(
+      closest-side,
+      color-mix(in srgb, var(--glow) 55%, transparent) 70%,
+      transparent 100%
+    );
+  }
+  /* Zemindeki yumuşak gölge (gövdeyle birlikte zıplamaz, yerinde kalır) */
+  .armagan::after {
+    content: "";
+    position: absolute;
+    left: 12%;
+    right: 12%;
+    bottom: -7%;
+    height: 16%;
+    z-index: -2;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgb(20 28 24 / 0.22), transparent);
+  }
+  :global(.dark) .armagan::after {
+    background: radial-gradient(closest-side, rgb(0 0 0 / 0.6), transparent);
+  }
+  .armagan__body {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    -webkit-user-drag: none;
+  }
+  .armagan__eye {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+  }
+  .armagan__iris {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: var(--iw);
+    aspect-ratio: 1;
+    /* Yüzdelik margin her zaman genişliğe göre hesaplanır; iris kare olduğu için tam ortalar. */
+    margin-left: calc(var(--iw) / -2);
+    margin-top: calc(var(--iw) / -2);
+    will-change: transform;
+  }
+  .armagan__iris img {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+  .armagan__lid {
+    position: absolute;
+    left: -4%;
+    top: -6%;
+    width: 108%;
+    height: 112%;
+    border-radius: 50%;
+    background: linear-gradient(
+      180deg,
+      color-mix(in srgb, var(--lid) 88%, #fff) 0%,
+      var(--lid) 62%,
+      color-mix(in srgb, var(--lid) 76%, #000) 100%
+    );
+    box-shadow: 0 6px 10px -4px rgb(0 0 0 / 0.35) inset;
+    transform-origin: 50% 0%;
+    transform: scaleY(0);
+    transition: transform 0.1s ease;
+  }
+  .armagan.is-blink .armagan__lid,
+  .armagan.is-shy .armagan__lid,
+  .armagan.is-wink .armagan__eye:nth-of-type(2) .armagan__lid {
+    transform: scaleY(1);
+    transition-duration: 0.12s;
+  }
+  .armagan.is-shy .armagan__rig {
+    transform: translateY(4%) scale(0.975) !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .armagan.is-hop {
+      animation: none;
+    }
+    .armagan__rig,
+    .armagan__lid {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  import { initMascots } from "./engine";
+  initMascots();
+</script>

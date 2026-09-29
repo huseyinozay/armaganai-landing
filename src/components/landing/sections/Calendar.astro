@@ -1,0 +1,174 @@
+---
+import { LuCalendarDays, LuNotebookPen, LuLayoutList, LuBellRing, LuLock, LuCalendarSync } from "react-icons/lu";
+import SectionHead from "./SectionHead.astro";
+import Stage, { type View } from "../screens/Stage.astro";
+
+const tabs: (View & { id: string; label: string; icon: typeof LuCalendarDays; title: string; text: string })[] = [
+  {
+    id: "takvim",
+    label: "Takvim",
+    icon: LuCalendarDays,
+    frame: "calendar",
+    title: "Hepsi tek takvimde",
+    text: "Duruşmalar UYAP'tan, süreler tebligattan, toplantılar sizden ya da asistandan gelir; türüne göre renklenir. Duruşmalar ertesi gün kendiliğinden tamamlanır, UYAP'ta ertelenirse takvim de güncellenir.",
+  },
+  {
+    id: "kayit",
+    label: "Kayıt kartı",
+    icon: LuNotebookPen,
+    frame: "event-detail",
+    focus: "dialog",
+    zoom: 1.12,
+    title: "İşin son durumu kartta",
+    text: "İş güncellemeleri kişi kişi, tarihiyle tutulur; katılımcılara bildirim gider. Kaydı tek tıkla kopyalayın ya da içeriğiyle göreve çevirin.",
+  },
+  {
+    id: "liste",
+    label: "Ana sayfa",
+    icon: LuLayoutList,
+    frame: "home-list",
+    title: "Baloncuk ya da liste",
+    text: "Günün kayıtları ana sayfada baloncuk ya da sade liste görünümünde. Sağdaki renklerle yalnız duruşmalara ya da kesin süreli işlere odaklanın.",
+  },
+];
+---
+
+<section class="section" id="takvim" aria-labelledby="takvim-title" data-companion="red" data-companion-say="Takviminiz hazır.">
+  <div class="page-width">
+    <SectionHead
+      color="red"
+      headingId="takvim-title"
+      eyebrow="Takvim"
+      title="Duruşmalar, süreler, toplantılar: tek takvim."
+      lead="Kayıtlar dosyasına ve müvekkiline bağlanır, türüne göre renklenir; işin son durumu kartında durur. Takviminiz hem büroda hem cebinizde."
+    />
+
+    <div class="team" data-tabs>
+      <div class="team__tabs" role="tablist" aria-label="Takvim ekranları">
+        {
+          tabs.map(({ id, label, icon: Icon }, i) => (
+            <button
+              type="button"
+              role="tab"
+              id={`tab-${id}`}
+              aria-controls={`panel-${id}`}
+              aria-selected={i === 0 ? "true" : "false"}
+              tabindex={i === 0 ? 0 : -1}
+              data-tab={i}
+            >
+              <Icon aria-hidden="true" />
+              {label}
+            </button>
+          ))
+        }
+      </div>
+
+      <Stage
+        views={tabs}
+        accent="var(--c-red)"
+        label="ArmağanAI takvimi: haftalık takvim, takvim kaydı kartı ve ana sayfanın liste görünümü."
+      />
+
+      <div class="team__panels">
+        {
+          tabs.map(({ id, title, text }, i) => (
+            <div role="tabpanel" id={`panel-${id}`} aria-labelledby={`tab-${id}`} data-tab-panel hidden={i !== 0}>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <ul class="extras">
+      <li><LuBellRing aria-hidden="true" /> Hatırlatmalar uygulamada ve e-postada</li>
+      <li><LuCalendarSync aria-hidden="true" /> Google Takvim'e tek yönlü aktarım</li>
+      <li><LuLock aria-hidden="true" /> Kişisel kayıtlar yalnızca sizin</li>
+    </ul>
+  </div>
+</section>
+
+<style>
+  .section {
+    padding: clamp(88px, 11vw, 150px) 0;
+  }
+  .team {
+    display: grid;
+    gap: 22px;
+    max-width: 1080px;
+    margin: 0 auto;
+  }
+  .team__tabs {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+  }
+  .team__tabs button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    height: 42px;
+    padding: 0 18px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    background: var(--glass);
+    color: var(--ink-soft);
+    font: 600 14.5px/1 var(--font-text);
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s,
+      border-color 0.2s;
+  }
+  .team__tabs button :global(svg) {
+    width: 16px;
+    height: 16px;
+  }
+  .team__tabs button[aria-selected="true"] {
+    border-color: transparent;
+    background: var(--ink);
+    color: var(--bg);
+  }
+  .team__panels {
+    min-height: 92px;
+    text-align: center;
+  }
+  .team__panels h3 {
+    margin-bottom: 6px;
+    font: 650 22px/1.2 var(--font-display);
+    letter-spacing: -0.015em;
+  }
+  .team__panels p {
+    max-width: 680px;
+    margin: 0 auto;
+    color: var(--ink-soft);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  .extras {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 26px;
+    margin-top: clamp(28px, 4vw, 44px);
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+  .extras li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .extras :global(svg) {
+    width: 17px;
+    height: 17px;
+    color: var(--c-red-ink);
+  }
+</style>
+
+<script>
+  import { runStageTabs } from "../screens/tabs";
+  document.querySelectorAll<HTMLElement>("#takvim [data-tabs]").forEach((root) => runStageTabs(root));
+</script>

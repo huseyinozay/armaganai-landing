@@ -1,0 +1,226 @@
+---
+// Sekmeli özellik turu: solda başlık + açıklama sekmeleri, sağda gerçek ekranlardan oluşan sahne.
+// Sekmeler kendiliğinden ilerler (tabs.ts); ekran okuyucular için her görünümün metin karşılığı var.
+import type { MascotColor } from "../mascot/family";
+import Stage, { type View } from "./Stage.astro";
+
+export interface TourTab extends View {
+  id: string;
+  icon: (props: Record<string, unknown>) => unknown;
+  title: string;
+  text: string;
+  /** Ekranda ne göründüğünün düz metin anlatımı (sekme paneli). */
+  screen: string;
+}
+
+interface Props {
+  id: string;
+  tabs: TourTab[];
+  color: MascotColor;
+  /** Sahnenin genel açıklaması */
+  label: string;
+  /** Sekme listesinin adı */
+  listLabel: string;
+  interval?: number;
+  /** Sahne solda, sekmeler sağda */
+  reverse?: boolean;
+}
+
+const { id, tabs, color, label, listLabel, interval = 6000, reverse = false } = Astro.props;
+---
+
+<div
+  class:list={["tour", { "tour--reverse": reverse }]}
+  data-feature-tour
+  data-interval={interval}
+  data-reveal
+  style={`--tone:var(--c-${color});--tone-ink:var(--c-${color}-ink)`}
+>
+  <div class="tour__tabs" role="tablist" aria-label={listLabel} aria-orientation="vertical">
+    {
+      tabs.map(({ id: tabId, icon: Icon, title, text }, i) => (
+        <button
+          type="button"
+          role="tab"
+          class="tab"
+          id={`${id}-tab-${tabId}`}
+          aria-controls={`${id}-panel-${tabId}`}
+          aria-selected={i === 0 ? "true" : "false"}
+          aria-labelledby={`${id}-tab-${tabId}-title`}
+          aria-describedby={`${id}-tab-${tabId}-text`}
+          tabindex={i === 0 ? 0 : -1}
+          data-tab={i}
+        >
+          <Icon className="tab__icon" aria-hidden="true" />
+          <span class="tab__title" id={`${id}-tab-${tabId}-title`}>
+            {title}
+          </span>
+          <span class="tab__text">
+            <span id={`${id}-tab-${tabId}-text`}>{text}</span>
+          </span>
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="tour__stage">
+    <Stage views={tabs} accent={`var(--c-${color})`} label={label} />
+    {
+      tabs.map(({ id: tabId, screen }, i) => (
+        <div
+          class="sr-only"
+          role="tabpanel"
+          data-tab-panel
+          id={`${id}-panel-${tabId}`}
+          aria-labelledby={`${id}-tab-${tabId}`}
+          hidden={i !== 0}
+        >
+          {screen}
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .tour {
+    display: grid;
+    grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.5fr);
+    gap: clamp(24px, 4vw, 56px);
+    align-items: center;
+  }
+  .tour--reverse {
+    grid-template-columns: minmax(0, 1.5fr) minmax(0, 0.78fr);
+  }
+  .tour--reverse .tour__tabs {
+    order: 2;
+  }
+  .tour__tabs {
+    display: grid;
+    gap: 6px;
+  }
+  .tab {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: center;
+    padding: 14px 16px;
+    border: 1px solid transparent;
+    border-radius: 16px;
+    background: transparent;
+    color: var(--ink);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 0.25s,
+      border-color 0.25s,
+      box-shadow 0.25s;
+  }
+  .tab:hover {
+    background: color-mix(in srgb, var(--glass) 60%, transparent);
+  }
+  .tab[aria-selected="true"] {
+    border-color: var(--glass-line);
+    background: var(--glass);
+    box-shadow: var(--glass-shadow);
+  }
+  .tab :global(.tab__icon) {
+    width: 38px;
+    height: 38px;
+    padding: 9px;
+    border-radius: 11px;
+    background: color-mix(in srgb, var(--tone) 14%, transparent);
+    color: var(--tone-ink);
+  }
+  .tab__title {
+    font: 650 17.5px/1.3 var(--font-display);
+    letter-spacing: -0.01em;
+  }
+  /* Açıklama yalnız seçili sekmede açılır (yükseklik yumuşakça değişir). */
+  .tab__text {
+    grid-column: 2;
+    display: grid;
+    grid-template-rows: 0fr;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.55;
+    transition: grid-template-rows 0.45s var(--ease-out);
+  }
+  .tab__text > span {
+    overflow: hidden;
+  }
+  .tab[aria-selected="true"] .tab__text {
+    grid-template-rows: 1fr;
+    margin-top: 6px;
+  }
+  /* Otomatik ilerlemenin süresi: seçili sekmenin altında dolan çizgi. */
+  .tab::after {
+    content: "";
+    position: absolute;
+    left: 16px;
+    right: 16px;
+    bottom: 0;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--tone);
+    opacity: 0;
+    transform: scaleX(0);
+    transform-origin: left;
+  }
+  [data-playing="true"] .tab[aria-selected="true"]::after {
+    opacity: 0.8;
+    animation: tab-fill var(--tab-interval, 6000ms) linear forwards;
+  }
+  @keyframes tab-fill {
+    to {
+      transform: scaleX(1);
+    }
+  }
+  .tour__stage {
+    position: relative;
+  }
+  .tour__stage::before {
+    content: "";
+    position: absolute;
+    inset: -10% -6%;
+    z-index: -1;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, color-mix(in srgb, var(--tone) 18%, transparent), transparent);
+    filter: blur(10px);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .tour {
+      opacity: 0;
+      transform: translateY(16px);
+      transition:
+        opacity 0.7s var(--ease-out),
+        transform 0.7s var(--ease-out);
+    }
+    .tour:global(.is-in) {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  @media (max-width: 960px) {
+    .tour,
+    .tour--reverse {
+      grid-template-columns: minmax(0, 1fr);
+    }
+    .tour__stage {
+      order: -1;
+    }
+    .tour--reverse .tour__tabs {
+      order: 0;
+    }
+  }
+</style>
+
+<script>
+  import { runStageTabs } from "./tabs";
+  document
+    .querySelectorAll<HTMLElement>("[data-feature-tour]")
+    .forEach((root) => runStageTabs(root, Number(root.dataset.interval) || 6000));
+</script>

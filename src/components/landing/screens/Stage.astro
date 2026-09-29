@@ -1,0 +1,230 @@
+---
+// Gerçek app karelerinden oluşan sahne: kareler arası geçiş, odak noktasına yakınlaşma,
+// vurgu halkası, "okuyor" taraması ve imleç. Sürücüsü stage.ts (zamanlayıcı ya da kaydırma).
+import { LuMousePointer2 } from "react-icons/lu";
+import { frameSources, target, type Rect } from "./sources";
+
+export interface View {
+  frame: string;
+  /** Manifestteki odak hedefi; yoksa kare bütün hâliyle gösterilir. */
+  focus?: string;
+  zoom?: number;
+  scan?: boolean;
+  /** İmlecin tıklayacağı hedef. */
+  pointer?: string;
+}
+
+interface Props {
+  views: View[];
+  label: string;
+  /** Vurgu halkası ve tarama rengi. */
+  accent?: string;
+  class?: string;
+}
+
+const { views, label, accent = "var(--c-green)", class: className } = Astro.props;
+
+// Kamera odak noktasına yakınlaştığında da keskin kalsın diye geniş varyant ağırlıklı seçilir.
+const SIZES = "(min-width: 700px) 1430px, 220vw";
+const frameIds = [...new Set(views.map((v) => v.frame))];
+const frames = await Promise.all(
+  frameIds.map(async (id) => ({ id, light: await frameSources(id, "light"), dark: await frameSources(id, "dark") })),
+);
+const center = (r: Rect | null) => r && { x: r.x + r.w / 2, y: r.y + r.h / 2 };
+const script = views.map((v) => ({
+  frame: frameIds.indexOf(v.frame),
+  focus: v.focus ? target(v.frame, v.focus) : null,
+  zoom: v.zoom ?? 1,
+  scan: !!v.scan,
+  pointer: v.pointer ? center(target(v.frame, v.pointer)) : null,
+}));
+const first = script[0]?.frame ?? 0;
+---
+
+<div
+  class:list={["stage", className]}
+  data-stage
+  data-views={JSON.stringify(script)}
+  role="img"
+  aria-label={label}
+  style={`--accent:${accent}`}
+>
+  <div class="cam" data-cam>
+    {
+      frames.map((frame, i) => (
+        <div class:list={["frame", { "is-on": i === first }]} data-frame={i}>
+          {(["light", "dark"] as const).map((theme) => (
+            <picture class={`frame__${theme}`}>
+              <source
+                type="image/avif"
+                sizes={SIZES}
+                {...(i === first ? { srcset: frame[theme].avif } : { "data-srcset": frame[theme].avif })}
+              />
+              <img
+                sizes={SIZES}
+                {...(i === first ? { srcset: frame[theme].webp } : { "data-srcset": frame[theme].webp })}
+                width={frame[theme].width}
+                height={frame[theme].height}
+                alt=""
+                loading="lazy"
+                decoding="async"
+                draggable="false"
+              />
+            </picture>
+          ))}
+        </div>
+      ))
+    }
+    <span class="ring" data-ring></span>
+    <span class="scan" data-scan></span>
+  </div>
+  <span class="cursor" data-cursor><LuMousePointer2 /></span>
+</div>
+
+<style>
+  .stage {
+    position: relative;
+    aspect-ratio: 1440 / 900;
+    overflow: hidden;
+    border-radius: 18px;
+    border: 1px solid var(--glass-line);
+    background: var(--surface);
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.5) inset,
+      0 40px 80px -36px rgb(17 22 20 / 0.55),
+      0 18px 36px -24px rgb(17 22 20 / 0.35);
+    isolation: isolate;
+  }
+  .cam {
+    position: absolute;
+    inset: 0;
+    transform-origin: 0 0;
+    transition: transform 1.3s var(--ease-out);
+    will-change: transform;
+  }
+  .frame {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    transition: opacity 0.7s ease;
+  }
+  .frame.is-on {
+    opacity: 1;
+  }
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    user-select: none;
+  }
+  .frame__dark,
+  :global(.dark) .frame__light {
+    display: none;
+  }
+  :global(.dark) .frame__dark {
+    display: block;
+  }
+
+  /* Vurgu ve tarama kameranın içinde: ekranla birlikte yakınlaşır. */
+  .ring,
+  .scan {
+    position: absolute;
+    pointer-events: none;
+    opacity: 0;
+    border-radius: 12px;
+    transition: opacity 0.5s ease;
+  }
+  .ring {
+    box-shadow:
+      0 0 0 2px color-mix(in srgb, var(--accent) 85%, transparent),
+      0 0 0 7px color-mix(in srgb, var(--accent) 18%, transparent),
+      0 0 40px 6px color-mix(in srgb, var(--accent) 22%, transparent);
+  }
+  .ring.is-on {
+    opacity: 1;
+  }
+  .scan {
+    overflow: hidden;
+  }
+  .scan::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -36%;
+    height: 36%;
+    background: linear-gradient(180deg, transparent, color-mix(in srgb, var(--accent) 30%, transparent) 50%, transparent);
+  }
+  .scan.is-on {
+    opacity: 1;
+  }
+  .scan.is-on::before {
+    animation: scan 1.2s linear infinite;
+  }
+
+  .cursor {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 4;
+    opacity: 0;
+    pointer-events: none;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 0.35));
+    transition:
+      transform 0.9s var(--ease-out),
+      opacity 0.3s;
+  }
+  .cursor :global(svg) {
+    width: 26px;
+    height: 26px;
+    fill: #fff;
+    color: #111614;
+  }
+  .cursor.is-on {
+    opacity: 1;
+  }
+  .cursor.is-click::after {
+    content: "";
+    position: absolute;
+    left: -11px;
+    top: -11px;
+    width: 26px;
+    height: 26px;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    animation: click-ring 0.55s ease-out both;
+  }
+
+  @keyframes scan {
+    to {
+      transform: translateY(378%);
+    }
+  }
+  @keyframes click-ring {
+    from {
+      opacity: 0.9;
+      transform: scale(0.4);
+    }
+    to {
+      opacity: 0;
+      transform: scale(1.7);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .stage {
+      border-radius: 14px;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .cam,
+    .frame,
+    .cursor,
+    .ring {
+      transition: none;
+    }
+    .scan {
+      display: none;
+    }
+  }
+</style>

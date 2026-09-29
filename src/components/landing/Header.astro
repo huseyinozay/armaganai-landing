@@ -1,0 +1,184 @@
+---
+import { LuMoon, LuSun } from "react-icons/lu";
+import { INVITE_URL, LOGIN_URL } from "./links";
+
+const nav = [
+  { label: "Özellikler", href: "#ozellikler" },
+  { label: "Asistan", href: "#asistan" },
+  { label: "Nasıl çalışır", href: "#nasil-calisir" },
+  { label: "Güvenlik", href: "#guvenlik" },
+  { label: "SSS", href: "#sss" },
+];
+---
+
+<header class="site-header" data-site-header>
+  <div class="bar glass">
+    <a class="brand" href="/" aria-label="ArmağanAI ana sayfa">
+      <span class="brand-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+      <span class="brand__name">ArmağanAI</span>
+    </a>
+
+    <nav class="nav" aria-label="Sayfa bölümleri">
+      {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+    </nav>
+
+    <div class="actions">
+      <button class="theme" type="button" data-theme-toggle aria-label="Koyu temaya geç">
+        <LuMoon className="theme__moon" aria-hidden="true" />
+        <LuSun className="theme__sun" aria-hidden="true" />
+      </button>
+      <a class="login" href={LOGIN_URL}>Giriş yapın</a>
+      <a class="btn btn--primary btn--sm invite" href={INVITE_URL}>Davet isteyin</a>
+    </div>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 12px;
+    z-index: 50;
+    width: min(100% - 2 * var(--gutter), var(--container));
+    margin: 12px auto 0;
+  }
+  .bar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 60px;
+    padding: 0 10px 0 20px;
+    border-radius: 999px;
+    transition: background-color 0.25s;
+  }
+  .site-header.is-scrolled .bar {
+    background: var(--glass-strong);
+  }
+  .brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    text-decoration: none;
+  }
+  .brand__name {
+    font: 700 19px/1 var(--font-display);
+    letter-spacing: -0.02em;
+  }
+  .nav {
+    display: flex;
+    gap: 4px;
+    margin-inline: auto;
+  }
+  .nav a,
+  .login {
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 14.5px;
+    font-weight: 500;
+    color: var(--ink-soft);
+    text-decoration: none;
+    transition:
+      color 0.15s,
+      background-color 0.15s;
+  }
+  .nav a:hover,
+  .login:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .theme {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .theme:hover {
+    color: var(--ink);
+    background: color-mix(in srgb, var(--ink) 6%, transparent);
+  }
+  .theme :global(svg) {
+    grid-area: 1 / 1;
+    width: 18px;
+    height: 18px;
+    transition:
+      opacity 0.2s,
+      transform 0.3s var(--ease-out);
+  }
+  .theme :global(.theme__sun) {
+    opacity: 0;
+    transform: rotate(-60deg) scale(0.6);
+  }
+  :global(.dark) .theme :global(.theme__sun) {
+    opacity: 1;
+    transform: none;
+  }
+  :global(.dark) .theme :global(.theme__moon) {
+    opacity: 0;
+    transform: rotate(60deg) scale(0.6);
+  }
+
+  @media (max-width: 880px) {
+    .nav {
+      display: none;
+    }
+    .actions {
+      margin-left: auto;
+    }
+  }
+  @media (max-width: 480px) {
+    .bar {
+      padding-left: 16px;
+      gap: 8px;
+    }
+    .invite {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const root = document.documentElement;
+  const header = document.querySelector<HTMLElement>("[data-site-header]");
+  const toggle = document.querySelector<HTMLButtonElement>("[data-theme-toggle]");
+
+  const label = () =>
+    toggle?.setAttribute(
+      "aria-label",
+      root.classList.contains("dark") ? "Açık temaya geç" : "Koyu temaya geç",
+    );
+
+  toggle?.addEventListener("click", () => {
+    const dark = !root.classList.contains("dark");
+    root.classList.toggle("dark", dark);
+    try {
+      localStorage.setItem("theme", dark ? "dark" : "light");
+    } catch {}
+    label();
+  });
+
+  // Kullanıcı tema seçmediyse sistem ayarını izle.
+  window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (e) => {
+    let saved = null;
+    try {
+      saved = localStorage.getItem("theme");
+    } catch {}
+    if (!saved) {
+      root.classList.toggle("dark", e.matches);
+      label();
+    }
+  });
+  label();
+
+  const onScroll = () => header?.classList.toggle("is-scrolled", window.scrollY > 8);
+  addEventListener("scroll", onScroll, { passive: true });
+  onScroll();
+</script>
