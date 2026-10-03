@@ -1,0 +1,1010 @@
+---
+import { LuKeyRound, LuLaptop, LuLock, LuLockOpen, LuServer } from "react-icons/lu";
+import Panel from "./Panel.astro";
+import { cipherLines } from "./cipher";
+
+// Ekranlardaki örnek evrak; bilgiler kurgusaldır.
+const doc = {
+  title: "BİLİRKİŞİ RAPORU",
+  lines: ["Esas No: 2026/418", "Davacı: A. Y.", "Alacak: 248.500 TL"],
+};
+const cipher = cipherLines(6, 418);
+
+const stations = [
+  {
+    kind: "laptop",
+    hasKey: true,
+    icon: LuLaptop,
+    place: "Sizin bilgisayarınız",
+    title: "Kilitlenir",
+    text: "Evrak, UYAP'tan inerken ya da siz yüklerken tarayıcınızda büro anahtarıyla şifrelenir; bilgisayarınızdan çıkmadan okunmaz hâle gelir.",
+  },
+  {
+    kind: "server",
+    hasKey: false,
+    icon: LuServer,
+    place: "Yolda ve sunucuda",
+    title: "Kilitli kalır",
+    text: "İnternette araya giren de, Frankfurt'taki depoda dosyaya bakan da yalnızca anlamsız karakterler görür. Anahtar bizde değil; biz de açamayız.",
+  },
+  {
+    kind: "laptop",
+    hasKey: true,
+    icon: LuLaptop,
+    place: "Ekip arkadaşınız",
+    title: "Yalnız büronuzda açılır",
+    text: "Belgeyi siz ya da ekipten biri açtığında şifre o bilgisayarda çözülür. Ekibe katılan üyeye erişimi siz tanımlarsınız.",
+  },
+];
+---
+
+<Panel
+  n="01"
+  color="purple"
+  eyebrow="Uçtan uca şifreleme"
+  headingId="sifreleme-title"
+  title="Bilgisayarınızdan kilitli çıkar, yalnız büronuzda açılır."
+  text="Kilitli bir kutu düşünün: kutuyu siz kilitlersiniz; internet de sunucu da onu taşır ama açamaz. Anahtar yalnızca büronuzun üyelerindedir."
+>
+  <div class="track" data-play>
+    {
+      stations.map(({ kind, hasKey, icon: Icon, place, title, text }, i) => (
+        <>
+          <div class:list={["station", `station--${i + 1}`]}>
+            <div class:list={["device", `device--${kind}`]} aria-hidden="true">
+              {kind === "server" ? (
+                <span class="rack">
+                  <i />
+                  <i />
+                </span>
+              ) : (
+                <span class="laptop">
+                  <i />
+                </span>
+              )}
+              <div class="doc">
+                <div class="doc__plain">
+                  <b>{doc.title}</b>
+                  {doc.lines.map((line) => (
+                    <span>{line}</span>
+                  ))}
+                  <i />
+                  <i />
+                </div>
+                <div class="doc__cipher">
+                  {cipher.map((line) => (
+                    <span>{line}</span>
+                  ))}
+                </div>
+                <i class="doc__scan" />
+                <span class="doc__lock">
+                  <span class="doc__open">
+                    <LuLockOpen />
+                  </span>
+                  <span class="doc__closed">
+                    <LuLock />
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <span class:list={["key", { "key--none": !hasKey }]}>
+              <span class="key__icon">
+                <LuKeyRound aria-hidden="true" />
+              </span>
+              {hasKey ? "Büro anahtarı" : "Anahtar yok"}
+            </span>
+
+            <div class="station__text">
+              <span class="station__step" aria-hidden="true" />
+              <p class="station__place">
+                <Icon aria-hidden="true" />
+                {place}
+              </p>
+              <h4>{title}</h4>
+              <p class="station__desc">{text}</p>
+            </div>
+          </div>
+
+          {i < stations.length - 1 && (
+            <div class:list={["pipe", `pipe--${i + 1}`]} aria-hidden="true">
+              <span class="pipe__label">internet</span>
+              <span class="packet">
+                <LuLock />
+              </span>
+            </div>
+          )}
+        </>
+      ))
+    }
+  </div>
+</Panel>
+
+<style>
+  /* Üç durak, aralarında iki boru. Cihaz çizimleri em ile ölçülür; --dev-fs ile büyür, küçülür. */
+  .track {
+    --dev-fs: 16px;
+    --loop: 10s;
+    --purple-glow: rgb(181 88 240 / 0.85);
+    display: grid;
+    grid-template-columns:
+      minmax(0, 1fr) minmax(64px, 0.5fr) minmax(0, 1fr) minmax(64px, 0.5fr)
+      minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .station {
+    display: grid;
+    grid-template-areas: "device" "key" "text";
+    justify-items: center;
+    gap: 16px;
+    text-align: center;
+  }
+
+  /* —— Cihazlar —— */
+  .device {
+    grid-area: device;
+    position: relative;
+    width: 15em;
+    height: 10em;
+    font-size: var(--dev-fs);
+  }
+  .laptop {
+    position: absolute;
+    inset: 0 1.2em auto;
+    height: 9.3em;
+    border: 1.5px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.8em 0.8em 0.3em 0.3em;
+    background: linear-gradient(180deg, #181d1a, #0f1210);
+  }
+  /* Gövde */
+  .laptop i {
+    position: absolute;
+    left: -1.35em;
+    right: -1.35em;
+    top: 100%;
+    height: 0.7em;
+    border-radius: 0.1em 0.1em 0.9em 0.9em / 0.1em 0.1em 0.7em 0.7em;
+    background: linear-gradient(180deg, #2c332f, #181c1a);
+    box-shadow: 0 0.7em 1.4em -0.5em rgb(0 0 0 / 0.9);
+  }
+  .laptop i::before {
+    content: "";
+    position: absolute;
+    left: calc(50% - 1.4em);
+    top: 0;
+    width: 2.8em;
+    height: 0.22em;
+    border-radius: 0 0 0.3em 0.3em;
+    background: #121513;
+  }
+  /* Sunucu: kulaklı bir raf kasası; üstte ışıklar ve havalandırma, altta disk yuvaları. */
+  .rack {
+    position: absolute;
+    inset: 0 1.2em;
+    border: 1.5px solid rgb(255 255 255 / 0.16);
+    border-radius: 0.55em;
+    background:
+      repeating-linear-gradient(90deg, rgb(255 255 255 / 0.07) 0 0.12em, transparent 0.12em 0.42em) 2.4em 0.3em / 3.4em 0.45em no-repeat,
+      linear-gradient(180deg, #181d1a, #0f1210);
+  }
+  .rack::before,
+  .rack::after {
+    content: "";
+    position: absolute;
+    top: 0.6em;
+    bottom: 0.6em;
+    width: 0.55em;
+    border: 1.5px solid rgb(255 255 255 / 0.12);
+    background:
+      radial-gradient(circle, #050606 0.12em, transparent 0.14em) 50% 0.45em / 100% 1em no-repeat,
+      radial-gradient(circle, #050606 0.12em, transparent 0.14em) 50% calc(100% - 0.45em) / 100% 1em no-repeat,
+      #1b201d;
+  }
+  .rack::before {
+    right: 100%;
+    border-right: 0;
+    border-radius: 0.3em 0 0 0.3em;
+  }
+  .rack::after {
+    left: 100%;
+    border-left: 0;
+    border-radius: 0 0.3em 0.3em 0;
+  }
+  /* Işıklar (sağ üstte evrakın kilit rozeti durduğu için solda) */
+  .rack i:first-child {
+    position: absolute;
+    top: 0.38em;
+    left: 0.65em;
+    width: 0.3em;
+    height: 0.3em;
+    border-radius: 50%;
+    background: var(--c-green);
+    box-shadow:
+      0.55em 0 0 var(--c-green),
+      1.1em 0 0 rgb(240 198 58 / 0.9);
+    opacity: 0.7;
+  }
+  /* Disk yuvaları */
+  .rack i:last-child {
+    position: absolute;
+    left: 0.7em;
+    right: 0.7em;
+    bottom: 0.45em;
+    height: 0.5em;
+    background: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.09) 0 2.1em, transparent 2.1em 2.4em);
+    border-radius: 0.15em;
+  }
+
+  /* —— Evrak: düz hâli altta, şifreli hâli üstte; şifreli katman soldan sağa açılıp kapanır —— */
+  .doc {
+    position: absolute;
+    left: calc(50% - 4.8em);
+    top: 1.05em;
+    width: 9.6em;
+    height: 7.2em;
+    text-align: left;
+  }
+  .doc__plain,
+  .doc__cipher {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    align-content: start;
+    overflow: hidden;
+    padding: 0.75em 0.85em;
+    border-radius: 0.4em;
+  }
+  .doc__plain {
+    gap: 0.3em;
+    background: #f4f1ea;
+    color: #23211c;
+    box-shadow: 0 0.8em 1.6em -0.8em rgb(0 0 0 / 0.75);
+  }
+  .doc__plain b {
+    font: 750 0.66em/1.25 var(--font-display);
+    letter-spacing: 0.03em;
+  }
+  .doc__plain span {
+    font: 500 0.6em/1.3 var(--font-text);
+    white-space: nowrap;
+  }
+  .doc__plain i {
+    display: block;
+    height: 0.28em;
+    margin-top: 0.1em;
+    border-radius: 1em;
+    background: rgb(35 33 28 / 0.14);
+  }
+  .doc__plain i:last-child {
+    width: 62%;
+  }
+  .doc__cipher {
+    gap: 0.22em;
+    border: 1px solid rgb(181 88 240 / 0.45);
+    background:
+      radial-gradient(120% 90% at 0% 0%, rgb(181 88 240 / 0.22), transparent 60%),
+      #150e1d;
+    color: #cb8ef8;
+  }
+  .doc__cipher span {
+    overflow: hidden;
+    font: 500 0.58em/1.32 var(--font-mono);
+    white-space: nowrap;
+    opacity: 0.85;
+  }
+  .doc__cipher span:first-child {
+    color: #ead2fd;
+    font-weight: 700;
+    opacity: 1;
+  }
+  /* Kilitlerken / açarken evrakın üzerinden geçen ışık */
+  .doc__scan {
+    position: absolute;
+    top: -0.35em;
+    bottom: -0.35em;
+    left: 0;
+    width: 2px;
+    margin-left: -1px;
+    border-radius: 2px;
+    background: #f1dcff;
+    box-shadow:
+      0 0 0.55em 0.12em var(--purple-glow),
+      0 0 1.6em 0.3em rgb(181 88 240 / 0.45);
+    opacity: 0;
+  }
+  .doc__lock {
+    position: absolute;
+    top: -0.65em;
+    right: -0.65em;
+    width: 1.75em;
+    height: 1.75em;
+    border: 1.5px solid rgb(255 255 255 / 0.2);
+    border-radius: 50%;
+    background: #141816;
+    box-shadow: 0 0.3em 0.8em rgb(0 0 0 / 0.6);
+  }
+  .doc__open,
+  .doc__closed {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+  }
+  .doc__open {
+    color: var(--c-green);
+    opacity: 0;
+  }
+  .doc__closed {
+    color: #d8a8fb;
+  }
+  .doc__lock :global(svg) {
+    width: 0.85em;
+    height: 0.85em;
+  }
+
+  /* Durağan çizim (animasyon kapalıyken): ilk evrak kilitlenirken, ikincisi depoda şifreli, üçüncüsü açılmış. */
+  .station--1 .doc__cipher {
+    clip-path: inset(0 48% 0 0);
+  }
+  .station--1 .doc__scan {
+    left: 52%;
+    opacity: 1;
+  }
+  .station--3 .doc__cipher {
+    clip-path: inset(0 0 0 100%);
+  }
+  .station--3 .doc__open {
+    opacity: 1;
+  }
+  .station--3 .doc__closed {
+    opacity: 0;
+  }
+
+  /* —— Anahtar rozeti —— */
+  .key {
+    grid-area: key;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 12px 6px 10px;
+    border: 1px solid rgb(59 232 90 / 0.35);
+    border-radius: 999px;
+    background: rgb(59 232 90 / 0.08);
+    color: #9af0a9;
+    font: 600 12.5px/1 var(--font-text);
+  }
+  .key__icon {
+    position: relative;
+    display: inline-grid;
+  }
+  .key__icon :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+  .key--none {
+    border-style: dashed;
+    border-color: rgb(255 255 255 / 0.2);
+    background: transparent;
+    color: var(--muted);
+  }
+  .key--none .key__icon::after {
+    content: "";
+    position: absolute;
+    left: -2px;
+    right: -2px;
+    top: calc(50% - 0.75px);
+    height: 1.5px;
+    border-radius: 2px;
+    background: currentColor;
+    transform: rotate(-45deg);
+  }
+
+  /* —— Durak metni —— */
+  .station__text {
+    grid-area: text;
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    max-width: 300px;
+  }
+  /* Hikâyenin hangi durakta olduğunu gösteren çizgi */
+  .station__step {
+    position: relative;
+    overflow: hidden;
+    width: 44px;
+    height: 3px;
+    margin-bottom: 4px;
+    border-radius: 3px;
+    background: rgb(255 255 255 / 0.12);
+  }
+  .station__step::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: var(--c-purple);
+    transform-origin: 0 50%;
+  }
+  .station--3 .station__step::after {
+    background: var(--c-green);
+  }
+  .station__place {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--muted);
+    font: 500 11.5px/1.2 var(--font-mono);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .station__place :global(svg) {
+    flex: none;
+    width: 14px;
+    height: 14px;
+  }
+  h4 {
+    margin: 0;
+    font: 650 20px/1.2 var(--font-display);
+    letter-spacing: -0.015em;
+  }
+  .station__desc {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    line-height: 1.55;
+  }
+
+  /* —— Borular ve yoldaki kilitli paket —— */
+  .pipe {
+    position: relative;
+    height: 28px;
+    margin-top: calc(var(--dev-fs) * 4.65 - 14px);
+  }
+  .pipe::before {
+    content: "";
+    position: absolute;
+    left: 6px;
+    right: 12px;
+    top: 13px;
+    height: 2px;
+    background: repeating-linear-gradient(90deg, rgb(255 255 255 / 0.26) 0 6px, transparent 6px 12px);
+  }
+  .pipe::after {
+    content: "";
+    position: absolute;
+    right: 6px;
+    top: 10px;
+    width: 8px;
+    height: 8px;
+    border-top: 2px solid rgb(255 255 255 / 0.32);
+    border-right: 2px solid rgb(255 255 255 / 0.32);
+    transform: rotate(45deg);
+  }
+  .pipe__label {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -20px;
+    color: var(--muted);
+    font: 500 10.5px/1 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-align: center;
+    text-transform: uppercase;
+  }
+  .packet {
+    --pkt: 40px;
+    position: absolute;
+    top: 0;
+    left: calc(50% - var(--pkt) / 2);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: var(--pkt);
+    height: 28px;
+    border: 1.5px solid rgb(181 88 240 / 0.75);
+    border-radius: 999px;
+    background: #1d1426;
+    color: #d8a8fb;
+    box-shadow: 0 0 18px rgb(181 88 240 / 0.4);
+  }
+  .packet :global(svg) {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* —— Canlı döngü (play.ts "is-live" ekler; ekrandan çıkınca durur) —— */
+  .track:global(.is-live) .station--1 .doc__cipher {
+    animation: sec-j-s1-cipher var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--1 .doc__scan {
+    animation: sec-j-s1-scan var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--1 .doc__open {
+    animation: sec-j-s1-open var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--1 .doc__closed {
+    animation: sec-j-s1-closed var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--1 .key {
+    animation: sec-j-key-1 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .pipe--1 .packet {
+    animation: sec-j-p1 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--2 .doc {
+    animation: sec-j-s2-doc var(--loop) var(--ease-out) infinite both;
+  }
+  .track:global(.is-live) .station--2 .rack i:first-child {
+    animation: sec-j-led var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .pipe--2 .packet {
+    animation: sec-j-p2 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .doc {
+    animation: sec-j-s3-doc var(--loop) var(--ease-out) infinite both;
+  }
+  .track:global(.is-live) .station--3 .doc__cipher {
+    animation: sec-j-s3-cipher var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .doc__scan {
+    animation: sec-j-s3-scan var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .doc__open {
+    animation: sec-j-s3-open var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .doc__closed {
+    animation: sec-j-s3-closed var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .key {
+    animation: sec-j-key-3 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--1 .station__step::after {
+    animation: sec-j-step-1 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--2 .station__step::after {
+    animation: sec-j-step-2 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live) .station--3 .station__step::after {
+    animation: sec-j-step-3 var(--loop) linear infinite both;
+  }
+  .track:global(.is-live):not(:global(.is-playing)) *,
+  .track:global(.is-live):not(:global(.is-playing)) *::after {
+    animation-play-state: paused;
+  }
+
+  /* Zaman çizelgesi (10 sn): 6–18 kilitlenir · 19–35 yolda · 35–44 depoda · 45–61 yolda ·
+     61–64 ulaşır · 65–77 açılır · 77–95 bekler · 95–100 baştan. */
+  @keyframes sec-j-s1-cipher {
+    0%,
+    6% {
+      clip-path: inset(0 100% 0 0);
+      opacity: 1;
+    }
+    18%,
+    95% {
+      clip-path: inset(0 0 0 0);
+      opacity: 1;
+    }
+    99% {
+      clip-path: inset(0 0 0 0);
+      opacity: 0;
+    }
+    100% {
+      clip-path: inset(0 100% 0 0);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-s1-scan {
+    0%,
+    6% {
+      left: 0%;
+      opacity: 0;
+    }
+    7%,
+    17% {
+      opacity: 1;
+    }
+    18%,
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-s1-open {
+    0%,
+    16% {
+      opacity: 1;
+    }
+    18%,
+    98% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes sec-j-s1-closed {
+    0%,
+    16% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    19% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+    22%,
+    95% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    98%,
+    100% {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+  @keyframes sec-j-key-1 {
+    0%,
+    4%,
+    24%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(59 232 90 / 0);
+    }
+    8%,
+    17% {
+      box-shadow:
+        0 0 0 4px rgb(59 232 90 / 0.16),
+        0 0 18px rgb(59 232 90 / 0.4);
+    }
+  }
+  @keyframes sec-j-p1 {
+    0%,
+    18% {
+      left: 0;
+      opacity: 0;
+    }
+    19% {
+      left: 0;
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+    }
+    35% {
+      left: calc(100% - var(--pkt) - 12px);
+      opacity: 1;
+    }
+    37%,
+    100% {
+      left: calc(100% - var(--pkt) - 12px);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-s2-doc {
+    0%,
+    35% {
+      opacity: 0;
+      transform: translateY(0.6em) scale(0.92);
+    }
+    39%,
+    95% {
+      opacity: 1;
+      transform: none;
+    }
+    99%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes sec-j-led {
+    0%,
+    35%,
+    39%,
+    44%,
+    100% {
+      opacity: 0.7;
+    }
+    36%,
+    38%,
+    40%,
+    42% {
+      opacity: 1;
+      filter: brightness(1.4);
+    }
+    37%,
+    41% {
+      opacity: 0.25;
+    }
+  }
+  @keyframes sec-j-p2 {
+    0%,
+    44% {
+      left: 0;
+      opacity: 0;
+    }
+    45% {
+      left: 0;
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+    }
+    61% {
+      left: calc(100% - var(--pkt) - 12px);
+      opacity: 1;
+    }
+    63%,
+    100% {
+      left: calc(100% - var(--pkt) - 12px);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-s3-doc {
+    0%,
+    61% {
+      opacity: 0;
+      transform: translateY(0.6em) scale(0.92);
+    }
+    64%,
+    95% {
+      opacity: 1;
+      transform: none;
+    }
+    99%,
+    100% {
+      opacity: 0;
+      transform: none;
+    }
+  }
+  @keyframes sec-j-s3-cipher {
+    0%,
+    65% {
+      clip-path: inset(0 0 0 0);
+    }
+    77%,
+    99% {
+      clip-path: inset(0 0 0 100%);
+    }
+    100% {
+      clip-path: inset(0 0 0 0);
+    }
+  }
+  @keyframes sec-j-s3-scan {
+    0%,
+    65% {
+      left: 0%;
+      opacity: 0;
+    }
+    66%,
+    76% {
+      opacity: 1;
+    }
+    77%,
+    100% {
+      left: 100%;
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-s3-open {
+    0%,
+    76% {
+      opacity: 0;
+      transform: scale(0.5);
+    }
+    79% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+    82%,
+    100% {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes sec-j-s3-closed {
+    0%,
+    75% {
+      opacity: 1;
+    }
+    77%,
+    100% {
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-key-3 {
+    0%,
+    62%,
+    82%,
+    100% {
+      box-shadow: 0 0 0 0 rgb(59 232 90 / 0);
+    }
+    66%,
+    76% {
+      box-shadow:
+        0 0 0 4px rgb(59 232 90 / 0.16),
+        0 0 18px rgb(59 232 90 / 0.4);
+    }
+  }
+  @keyframes sec-j-step-1 {
+    0% {
+      transform: scaleX(0);
+      opacity: 1;
+    }
+    19%,
+    96% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    99% {
+      transform: scaleX(1);
+      opacity: 0;
+    }
+    100% {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-step-2 {
+    0%,
+    19% {
+      transform: scaleX(0);
+      opacity: 1;
+    }
+    61%,
+    96% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    99% {
+      transform: scaleX(1);
+      opacity: 0;
+    }
+    100% {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-step-3 {
+    0%,
+    61% {
+      transform: scaleX(0);
+      opacity: 1;
+    }
+    77%,
+    96% {
+      transform: scaleX(1);
+      opacity: 1;
+    }
+    99% {
+      transform: scaleX(1);
+      opacity: 0;
+    }
+    100% {
+      transform: scaleX(0);
+      opacity: 0;
+    }
+  }
+
+  /* —— Telefon: duraklar alt alta, cihaz solda, metin sağda; paket aşağı iner —— */
+  @media (max-width: 760px) {
+    .track {
+      --dev-fs: 9px;
+      display: flex;
+      flex-direction: column;
+    }
+    .station {
+      grid-template-columns: calc(var(--dev-fs) * 15) minmax(0, 1fr);
+      grid-template-rows: auto auto 1fr;
+      grid-template-areas: "device text" "key text" "line text";
+      align-items: start;
+      justify-items: start;
+      column-gap: 16px;
+      row-gap: 10px;
+      text-align: left;
+    }
+    /* Metin uzun olduğunda cihaz sütununda kalan boşluk: bir sonraki boruya uzanan kesikli çizgi */
+    .station:not(.station--3)::after {
+      content: "";
+      grid-area: line;
+      align-self: stretch;
+      justify-self: center;
+      width: 2px;
+      background: repeating-linear-gradient(180deg, rgb(255 255 255 / 0.26) 0 6px, transparent 6px 12px);
+    }
+    .key {
+      justify-self: center;
+      padding: 5px 9px 5px 8px;
+      font-size: 11.5px;
+    }
+    .station__text {
+      justify-items: start;
+      gap: 6px;
+    }
+    .station__step {
+      margin-bottom: 2px;
+    }
+    h4 {
+      font-size: 18px;
+    }
+    .station__desc {
+      font-size: 14px;
+    }
+    .pipe {
+      width: calc(var(--dev-fs) * 15);
+      height: 60px;
+      margin: 4px 0;
+    }
+    .pipe::before {
+      left: calc(50% - 1px);
+      right: auto;
+      top: 4px;
+      bottom: 12px;
+      width: 2px;
+      height: auto;
+      background: repeating-linear-gradient(180deg, rgb(255 255 255 / 0.26) 0 6px, transparent 6px 12px);
+    }
+    .pipe::after {
+      right: auto;
+      left: calc(50% - 4px);
+      top: auto;
+      bottom: 6px;
+      transform: rotate(135deg);
+    }
+    .pipe__label {
+      display: none;
+    }
+    .packet {
+      top: calc(50% - 14px);
+    }
+    .track:global(.is-live) .pipe--1 .packet {
+      animation-name: sec-j-p1-y;
+    }
+    .track:global(.is-live) .pipe--2 .packet {
+      animation-name: sec-j-p2-y;
+    }
+  }
+  @keyframes sec-j-p1-y {
+    0%,
+    18% {
+      top: 0;
+      opacity: 0;
+    }
+    19% {
+      top: 0;
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+    }
+    35% {
+      top: calc(100% - 28px);
+      opacity: 1;
+    }
+    37%,
+    100% {
+      top: calc(100% - 28px);
+      opacity: 0;
+    }
+  }
+  @keyframes sec-j-p2-y {
+    0%,
+    44% {
+      top: 0;
+      opacity: 0;
+    }
+    45% {
+      top: 0;
+      opacity: 1;
+      animation-timing-function: cubic-bezier(0.45, 0, 0.25, 1);
+    }
+    61% {
+      top: calc(100% - 28px);
+      opacity: 1;
+    }
+    63%,
+    100% {
+      top: calc(100% - 28px);
+      opacity: 0;
+    }
+  }
+</style>
+
+<script>
+  import "./play";
+</script>

@@ -1,39 +1,14 @@
 ---
-import {
-  LuFileLock2,
-  LuKeyRound,
-  LuScale,
-  LuBrainCircuit,
-  LuPlug,
-  LuUserCheck,
-  LuEyeOff,
-  LuTimer,
-} from "react-icons/lu";
+import { LuPlug, LuUserCheck, LuEyeOff, LuTimer } from "react-icons/lu";
 import SectionHead from "./SectionHead.astro";
 import Armagan from "../mascot/Armagan.astro";
 import { MASCOT_COLORS } from "../mascot/family";
+import Journey from "../security/Journey.astro";
+import AiPromise from "../security/AiPromise.astro";
+import KvkkTransfer from "../security/KvkkTransfer.astro";
 
+// Şifreleme, yapay zekâ ve KVKK yukarıdaki görsellerde; burada kalan önlemler.
 const facts = [
-  {
-    icon: LuFileLock2,
-    title: "Tarayıcıda şifreleme",
-    text: "Evrak dosyaları cihazınızda şifrelenir ve depoya şifreli hâliyle gider. Büro anahtarı olmadan açılamaz.",
-  },
-  {
-    icon: LuKeyRound,
-    title: "Anahtar sizde",
-    text: "Büronuza özel güvenlik anahtarı kurulumda size verilir, bizde durmaz. Ekibe katılan üyeye erişimi siz tanımlarsınız.",
-  },
-  {
-    icon: LuScale,
-    title: "KVKK'ya uygun",
-    text: "Verileriniz Kişisel Verilerin Korunması Kanunu'na uygun olarak saklanır ve işlenir.",
-  },
-  {
-    icon: LuBrainCircuit,
-    title: "Model eğitimi yok",
-    text: "Verileriniz hiçbir yapay zekâ modelinin eğitiminde kullanılmaz; bu, sağlayıcı sözleşmeleriyle güvence altındadır.",
-  },
   {
     icon: LuPlug,
     title: "UYAP şifreniz bizde değil",
@@ -72,6 +47,12 @@ const facts = [
       lead="Evrak dosyaları sizin tarayıcınızda şifrelenir; büro anahtarı olmadan kimse açamaz, biz de. Verileriniz KVKK'ya uygun olarak saklanır, yapay zekâ modellerinin eğitiminde kullanılmaz."
     />
 
+    <Journey />
+
+    <div class="pair">
+      <AiPromise />
+      <KvkkTransfer />
+    </div>
 
     <ul class="facts">
       {
@@ -86,9 +67,9 @@ const facts = [
     </ul>
 
     <p class="fine">
-      Uçtan uca şifreleme evrak dosyalarını kapsar. Dava ve müvekkil bilgileri, görev ve takvim kayıtları da
-      şifreli olarak, KVKK'ya uygun şekilde saklanır. Tebligat yapay zekâ ile okunurken belge yalnızca işlem
-      süresince açılır.
+      Uçtan uca şifreleme evrak dosyalarını kapsar: UYAP evrakı, tebligat ekleri, görev ve takvim ekleri.
+      Dava ve müvekkil bilgileri, görev ve takvim kayıtları da şifreli olarak, KVKK'ya uygun şekilde saklanır.
+      Tebligat yapay zekâ ile okunurken belge yalnızca işlem süresince açılır.
       Ayrıntılar <a href="/privacy">Aydınlatma Metni</a>'nde.
     </p>
   </div>
@@ -154,10 +135,18 @@ const facts = [
   }
 
 
+  .pair {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
   .facts {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 14px;
+    margin-top: clamp(40px, 5vw, 64px);
   }
   .facts li {
     display: grid;
@@ -195,6 +184,9 @@ const facts = [
   }
 
   @media (max-width: 1000px) {
+    .pair {
+      grid-template-columns: minmax(0, 1fr);
+    }
     .facts {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }

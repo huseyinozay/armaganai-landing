@@ -1,0 +1,183 @@
+---
+import { LuCheck } from "react-icons/lu";
+import Panel from "./Panel.astro";
+
+// KVKK m.9 standart sözleşmeleri; adlar Kurum'un yayımladığı metinlerdeki gibi.
+const contracts = [
+  {
+    name: "Standart Sözleşme-2",
+    type: "Veri sorumlusundan veri işleyene",
+    scope: "ArmağanAI'ın veri sorumlusu olduğu veriler için; örneğin kullanıcı hesapları.",
+  },
+  {
+    name: "Standart Sözleşme-3",
+    type: "Veri işleyenden veri işleyene",
+    scope: "Büronuz adına işlenen veriler için; dosya, müvekkil ve evrak bilgileri.",
+  },
+];
+---
+
+<Panel
+  n="03"
+  color="green"
+  eyebrow="KVKK"
+  headingId="kvkk-title"
+  title="Sözleşmeler imzalandı, KVKK bildirimleri yapıldı."
+  text="KVKK'nın 9. maddesi uyarınca Standart Sözleşme-2 ve Standart Sözleşme-3 imzalandı; ikisi de Kişisel Verileri Koruma Kurumu'na bildirildi."
+>
+  <ul class="sheets" data-reveal>
+    {
+      contracts.map(({ name, type, scope }, i) => (
+        <li class="sheet" style={`--i:${i}`}>
+          <p class="sheet__kicker">6698 sayılı KVKK · m.9</p>
+          <h4>{name}</h4>
+          <p class="sheet__type">{type}</p>
+          <p class="sheet__scope">{scope}</p>
+          <span class="sheet__lines" aria-hidden="true">
+            <i />
+            <i />
+            <i />
+          </span>
+          <ul class="sheet__checks">
+            <li style="--j:0">
+              <LuCheck aria-hidden="true" />
+              İmzalandı
+            </li>
+            <li style="--j:1">
+              <LuCheck aria-hidden="true" />
+              Kurum'a bildirildi
+            </li>
+          </ul>
+        </li>
+      ))
+    }
+  </ul>
+</Panel>
+
+<style>
+  /* Sözleşmeler: masaya bırakılmış iki kâğıt. */
+  .sheets {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+    padding: 6px 4px 4px;
+  }
+  .sheet {
+    display: grid;
+    align-content: start;
+    gap: 6px;
+    padding: 18px 18px 16px;
+    border-radius: 10px;
+    background: linear-gradient(180deg, #f7f4ed, #efebe2);
+    color: #23211c;
+    box-shadow:
+      0 1px 0 rgb(255 255 255 / 0.6) inset,
+      0 22px 40px -22px rgb(0 0 0 / 0.9);
+    transform: rotate(-1.4deg);
+  }
+  .sheet:nth-child(2) {
+    transform: rotate(1.2deg) translateY(6px);
+  }
+  .sheet__kicker {
+    color: #77736a;
+    font: 500 9.5px/1.2 var(--font-mono);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  h4 {
+    margin: 2px 0 0;
+    font: 700 17px/1.2 var(--font-display);
+    letter-spacing: -0.012em;
+  }
+  .sheet__type {
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .sheet__scope {
+    color: #5d594f;
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+  .sheet__lines {
+    display: grid;
+    gap: 5px;
+    margin: 6px 0 4px;
+  }
+  .sheet__lines i {
+    height: 4px;
+    border-radius: 4px;
+    background: rgb(35 33 28 / 0.1);
+  }
+  .sheet__lines i:nth-child(2) {
+    width: 88%;
+  }
+  .sheet__lines i:nth-child(3) {
+    width: 64%;
+  }
+  .sheet__checks {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 4px;
+  }
+  .sheet__checks li {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px 5px 7px;
+    border: 1px solid #b9e2c1;
+    border-radius: 999px;
+    background: #e4f4e7;
+    color: #13823a;
+    font-size: 11.5px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+  .sheet__checks :global(svg) {
+    width: 13px;
+    height: 13px;
+    stroke-width: 3;
+  }
+
+  /* Görününce kâğıtlar yerine oturur, onaylar sırayla düşer. */
+  @media (prefers-reduced-motion: no-preference) {
+    .sheet {
+      opacity: 0;
+      translate: 0 22px;
+      transition:
+        opacity 0.6s var(--ease-out),
+        translate 0.8s var(--ease-out);
+      transition-delay: calc(var(--i) * 140ms);
+    }
+    .sheet__checks li {
+      opacity: 0;
+      scale: 1.35;
+      transition:
+        opacity 0.25s ease,
+        scale 0.45s var(--ease-spring);
+      transition-delay: calc(700ms + var(--i) * 280ms + var(--j) * 420ms);
+    }
+    .sheets:global(.is-in) .sheet {
+      opacity: 1;
+      translate: 0 0;
+    }
+    .sheets:global(.is-in) .sheet__checks li {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .sheets {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    .sheet {
+      transform: rotate(-0.8deg);
+    }
+    .sheet:nth-child(2) {
+      transform: rotate(0.8deg);
+    }
+  }
+</style>
