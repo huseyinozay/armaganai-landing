@@ -542,7 +542,7 @@ async function shoot(browser, frame, dark) {
   return targets;
 }
 
-(async () => {
+async function main() {
   const only = process.argv.slice(2);
   const frames = only.length ? FRAMES.filter((f) => only.includes(f.id)) : FRAMES;
   const previous = fs.existsSync(MANIFEST) ? JSON.parse(fs.readFileSync(MANIFEST, "utf8")) : { frames: {} };
@@ -578,7 +578,14 @@ async function shoot(browser, frame, dark) {
   fs.mkdirSync(path.dirname(MANIFEST), { recursive: true });
   fs.writeFileSync(MANIFEST, JSON.stringify(manifest, null, 2) + "\n");
   console.log(`Kareler: ${path.relative(ROOT, OUT_DIR)} · Manifest: ${path.relative(ROOT, MANIFEST)}`);
-})().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+}
+
+// Sosyal medya videolarının çekimi (scripts/social-video) aynı taklitleri kullanır.
+module.exports = { prepare, seedKeys, WALLPAPER };
+
+if (require.main === module) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}

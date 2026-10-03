@@ -1,0 +1,781 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <title>01 · Tebligattan takvime</title>
+    <link rel="stylesheet" href="/node_modules/@fontsource-variable/bricolage-grotesque/opsz.css" />
+    <link rel="stylesheet" href="/node_modules/@fontsource-variable/geist/index.css" />
+    <link rel="stylesheet" href="/node_modules/@fontsource-variable/geist-mono/index.css" />
+    <link rel="stylesheet" href="../kit/kit.css" />
+    <style>
+      .dim {
+        position: absolute;
+        inset: 0;
+        background: rgb(11 13 12 / 0.9);
+        opacity: 0;
+      }
+      .bubble {
+        border-radius: 26px 8px 26px 26px;
+        transform-origin: 100% 0%;
+      }
+      .copy .chip {
+        margin-bottom: 30px;
+      }
+      .copy .sub {
+        margin-top: 22px;
+      }
+
+      /* Gerekçeli karar: önizlemedeki A4 sayfası */
+      .page {
+        position: absolute;
+        overflow: hidden;
+        border-radius: 4px;
+        background: #fff;
+        box-shadow:
+          0 0 0 1px rgb(0 0 0 / 0.05),
+          0 60px 120px -40px rgb(0 0 0 / 0.95);
+      }
+      .page img {
+        position: absolute;
+      }
+      .marker {
+        position: absolute;
+        border-radius: 3px;
+        background: rgb(255 210 0 / 0.5);
+        mix-blend-mode: multiply;
+        transform-origin: 0 50%;
+      }
+      .beam {
+        position: absolute;
+        height: 64px;
+        background: linear-gradient(180deg, transparent, rgb(181 88 240 / 0.18));
+      }
+      .beam::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 2.5px;
+        background: #b558f0;
+        box-shadow: 0 0 10px 2px rgb(181 88 240 / 0.75);
+      }
+      .results {
+        position: absolute;
+        left: 0;
+        top: 1452px;
+        width: 1080px;
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+      }
+      .results .pill {
+        position: static;
+        font-size: 27px;
+        padding: 13px 20px 13px 16px;
+      }
+
+      /* Süre kartı */
+      .law {
+        position: absolute;
+        left: 90px;
+        top: 742px;
+        width: 900px;
+        padding: 44px 48px 42px;
+        border-radius: 36px;
+        background: #fbfbf8;
+        color: #111614;
+        box-shadow: 0 50px 100px -40px rgb(0 0 0 / 0.9);
+        transform-origin: 50% 60%;
+        opacity: 0;
+      }
+      .law__head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      .law__label {
+        font: 600 34px/1.1 var(--font-text);
+        color: #37423d;
+      }
+      .law__badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border: 2px solid rgb(245 69 63 / 0.45);
+        border-radius: 14px;
+        color: #c4231c;
+        font: 600 28px/1 var(--font-mono);
+      }
+      .law__badge svg,
+      .law__note svg {
+        width: 28px;
+        height: 28px;
+        flex: none;
+      }
+      .law__big {
+        margin-top: 14px;
+        font: 700 150px/0.98 var(--font-display);
+        letter-spacing: -0.035em;
+      }
+      .law__note1 {
+        margin-top: 6px;
+        font: 450 30px/1.3 var(--font-text);
+        color: #68746e;
+      }
+      .law__dates {
+        display: grid;
+        grid-template-columns: auto 1fr auto;
+        align-items: center;
+        gap: 22px;
+        margin-top: 40px;
+      }
+      .law__day small {
+        display: block;
+        font: 600 21px/1 var(--font-mono);
+        letter-spacing: 0.1em;
+        color: #68746e;
+      }
+      .law__day b {
+        display: block;
+        margin-top: 12px;
+        font: 650 52px/1 var(--font-display);
+        letter-spacing: -0.02em;
+      }
+      .law__day span {
+        display: block;
+        margin-top: 8px;
+        font: 450 27px/1 var(--font-text);
+        color: #68746e;
+      }
+      .law__day--due {
+        text-align: right;
+      }
+      .law__day--due b {
+        color: #d50000;
+      }
+      .law__rule {
+        position: relative;
+        display: grid;
+        place-items: center;
+        height: 56px;
+      }
+      .law__rule::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 50%;
+        border-top: 3px dashed #c9cfcb;
+      }
+      .law__rule span {
+        position: relative;
+        padding: 6px 16px;
+        background: #fbfbf8;
+        font: 600 27px/1 var(--font-text);
+        color: #37423d;
+      }
+      .law__strip {
+        display: grid;
+        grid-template-columns: repeat(var(--n), 1fr);
+        gap: 6px;
+        margin-top: 34px;
+      }
+      .law__strip i {
+        display: grid;
+        place-items: center;
+        height: 62px;
+        border-radius: 10px;
+        background: #eceee9;
+        color: #37423d;
+        font: 600 23px/1 var(--font-mono);
+        font-style: normal;
+      }
+      .law__strip i.we {
+        background: transparent;
+        color: #a3aba7;
+        box-shadow: inset 0 0 0 2px #eceee9;
+      }
+      .law__strip i.start {
+        background: #111614;
+        color: #fff;
+      }
+      .law__strip i.due {
+        background: #d50000;
+        color: #fff;
+      }
+      .law__note {
+        display: flex;
+        align-items: flex-start;
+        gap: 14px;
+        margin-top: 30px;
+        font: 450 27px/1.35 var(--font-text);
+        color: #37423d;
+      }
+      .law__note svg {
+        margin-top: 2px;
+        color: #68746e;
+      }
+
+      .lockup {
+        position: absolute;
+        left: 0;
+        top: 1336px;
+        width: 1080px;
+        display: grid;
+        justify-items: center;
+        gap: 24px;
+        opacity: 0;
+      }
+      .lockup p {
+        font: 500 27px/1 var(--font-mono);
+        letter-spacing: 0.06em;
+        color: var(--ink-soft);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="frame">
+      <div class="layer" id="family"></div>
+      <div class="band" style="top: 600px; height: 960px">
+        <div class="world" id="world" style="top: -600px"></div>
+        <div class="dim" id="dim"></div>
+      </div>
+      <div class="band" style="top: 600px; height: 960px"><div class="world" id="rings" style="top: -600px"></div></div>
+      <div class="band" style="top: 600px; height: 960px">
+        <div class="world" id="paper" style="top: -600px; opacity: 0">
+          <div class="page" id="page"><img src="../shots/doc.webp" alt="" /></div>
+          <div class="beam" id="beam"></div>
+        </div>
+      </div>
+      <div class="results" id="results"></div>
+      <div class="law" id="law"></div>
+      <div class="layer" id="fx"></div>
+      <div class="layer" id="guide"></div>
+      <div class="layer" id="copy"></div>
+      <div class="lockup" id="lockup">
+        <div class="brand">
+          <span class="brand__dots"
+            ><i style="background: var(--c-green)"></i><i style="background: var(--c-red)"></i
+            ><i style="background: var(--c-purple)"></i><i style="background: var(--c-yellow)"></i
+          ></span>
+          <span class="brand__name">ArmağanAI</span>
+        </div>
+        <p>Davetli beta · armaganai.com</p>
+      </div>
+    </div>
+
+    <script src="../kit/kit.js"></script>
+    <script>
+      const { clamp, prog, ease, life, el, Camera, Laptop, Mascot, Cursor, cursorPath, typed, run } = Kit;
+      const $ = (id) => document.getElementById(id);
+      const TONE = { red: "#f5453f", green: "#3be85a", purple: "#b558f0", yellow: "#f0c63a" };
+      const ART = (c) => ({ body: `/src/assets/mascot/${c}-body.webp`, iris: `/src/assets/mascot/${c}-iris.webp` });
+      const ICON = {
+        scale: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/><path d="M7 21h10"/><path d="M12 3v18"/><path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/></svg>`,
+        calendar: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/><path d="m9 16 2 2 4-4"/></svg>`,
+      };
+
+      // Sahne başlangıçları (sn)
+      const T = { intro: 2.9, s1: 5.6, s2: 11.0, s3: 17.6, s4: 23.4, s5: 29.8, trust: 33.4, outro: 37.6, end: 41.8 };
+
+      fetch("../shots/manifest.json")
+        .then((r) => r.json())
+        .then(build);
+
+      function build(M) {
+        const S = Object.fromEntries(Object.entries(M.shots).map(([k, v]) => [k, v.targets]));
+        const tr = (d, o) => new Intl.DateTimeFormat("tr-TR", { timeZone: "Europe/Istanbul", ...o }).format(new Date(d));
+        const served = { day: tr(M.facts.served, { day: "numeric", month: "long" }), wd: tr(M.facts.served, { weekday: "long" }) };
+        const due = { day: tr(M.facts.deadline, { day: "numeric", month: "long" }), wd: tr(M.facts.deadline, { weekday: "long" }) };
+        const dueKey = tr(M.facts.deadline, { day: "numeric", month: "numeric" });
+        const days = [];
+        for (let ms = new Date(M.facts.served).getTime(); days.length < 40; ms += 864e5) {
+          days.push({ n: tr(ms, { day: "numeric" }), we: ["Cmt", "Paz"].includes(tr(ms, { weekday: "short" })) });
+          if (tr(ms, { day: "numeric", month: "numeric" }) === dueKey) break;
+        }
+
+        // ---------- Dizüstü ve kamera ----------
+        const laptop = Laptop($("world"), {
+          x: 90,
+          y: 760,
+          width: 900,
+          url: "app.armaganai.com",
+          shots: Object.fromEntries(
+            ["notices-before", "notices-sync0", "notices-sync1", "notices-processing", "notices-done", "bell", "calendar", "task", "review"].map(
+              (id) => [id, `../shots/${id}.webp`],
+            ),
+          ),
+        });
+        const EST = { K: 1, lx: 540, ly: 1080, dx: 540, dy: 1080 };
+        const V = (x, y, w, h, o) => laptop.view({ x, y, w, h }, { cy: 1100, maxH: 760, ...o });
+        // Üst bar: odak biraz aşağıda, tarayıcı çubuğu ve sayfa başlığı da kadraja girsin.
+        const NAV = V(950, -10, 470, 260);
+        const CARD = V(236, 290, 400, 360);
+        const BADGE = V(248, 400, 376, 230);
+        const DONE = V(236, 380, 400, 370);
+        const CAL = V(130, 130, 420, 150);
+        const TASK = V(180, 350, 540, 380);
+        const BELL = V(940, 50, 340, 240);
+        const REVIEW = V(236, 470, 400, 300);
+        const OUTRO = { K: 0.9, lx: 540, ly: 1080, dx: 540, dy: 1000 };
+        // Başka bir ekrana geçerken önce sayfanın tamamı görünecek kadar uzaklaşılır.
+        const MID = laptop.view({ x: 0, y: 0, w: 1440, h: 900 }, { k: 1.25, cy: 1080 });
+        const cam = Camera($("world"), [
+          { v: EST },
+          { t: 0, dur: T.s1, ease: ease.linear, v: { ...EST, K: 1.06 } },
+          { t: T.s1, dur: 0.95, v: NAV },
+          { t: 8.55, dur: 0.9, v: CARD },
+          { t: T.s2, dur: 0.7, v: BADGE },
+          { t: T.s4 - 0.1, dur: 0.75, v: DONE },
+          { t: 24.85, dur: 0.45, v: MID },
+          { t: 25.3, dur: 0.65, v: CAL },
+          { t: 27.05, dur: 0.45, v: MID },
+          { t: 27.5, dur: 0.65, v: TASK },
+          { t: T.s5, dur: 0.4, v: MID },
+          { t: 30.0, dur: 0.6, v: NAV },
+          { t: 31.15, dur: 0.7, v: BELL },
+          { t: T.trust, dur: 0.4, v: MID },
+          { t: 33.8, dur: 0.65, v: REVIEW },
+          { t: T.outro, dur: 1.1, v: OUTRO },
+        ]);
+        const SCREENS = [
+          { t: 0, id: "notices-before" },
+          { t: 7.3, id: "notices-sync0", fade: 0.1 },
+          { t: 7.95, id: "notices-sync1", fade: 0.1 },
+          { t: 8.55, id: "notices-processing", fade: 0.15 },
+          { t: T.s4 - 0.3, id: "notices-done" },
+          { t: 25.05, id: "calendar", fade: 0.25 },
+          { t: 27.25, id: "task", fade: 0.25 },
+          { t: 29.75, id: "notices-done", fade: 0.25 },
+          { t: 31.08, id: "bell", fade: 0.15 },
+          { t: 33.55, id: "review", fade: 0.25 },
+          { t: T.outro, id: "notices-done" },
+        ];
+        const mapApp = (x, y, c) => {
+          const l = laptop.toLocal(x, y);
+          return cam.map(l.x, l.y, c);
+        };
+        const frameRect = (r, c, pad = 0) => {
+          const a = mapApp(r.x, r.y, c);
+          const b = mapApp(r.x + r.w, r.y + r.h, c);
+          return { x: a.x - pad, y: a.y - pad, w: b.x - a.x + 2 * pad, h: b.y - a.y + 2 * pad };
+        };
+
+        // ---------- Vurgu halkaları ve etiketler (app dikdörtgenine bağlı) ----------
+        const UETS = S["notices-before"].uets;
+        const P = S["notices-processing"];
+        const RINGS = [
+          { r: UETS, a: 0.35, b: 2.75, tone: TONE.red, pulse: true },
+          { r: UETS, a: 6.8, b: 7.35, tone: TONE.red },
+          { r: P.matched, a: 9.6, b: 10.85, tone: TONE.green },
+          { r: P.badge, a: 11.4, b: 12.15, tone: TONE.purple },
+          { r: S["notices-done"].created, a: 23.85, b: 24.85, tone: TONE.purple },
+          { r: S.calendar.deadline, a: 26.0, b: 27.1, tone: TONE.red },
+          { r: S.task.due, a: 28.2, b: 29.5, tone: TONE.red },
+          { r: S.task.assignees, a: 28.4, b: 29.5, tone: TONE.yellow },
+          { r: S.bell.item, a: 31.9, b: 33.3, tone: TONE.green },
+          { r: S.review.badge, a: 34.5, b: 37.45, tone: TONE.yellow },
+          { r: S.review.note, a: 35.2, b: 37.45, tone: TONE.yellow },
+        ].map((x) => ({ ...x, el: el("div", "ring", $("rings")) }));
+        const PILLS = [
+          { html: `<i></i>UETS'de <b>1 yeni tebligat</b>`, r: UETS, a: 0.45, b: 2.75, tone: TONE.red },
+          { html: `<i></i>Tebligatları Senkronize Et`, r: UETS, a: 6.95, b: 8.1, tone: TONE.red },
+          { html: `<i></i>Doğru dosyaya bağlandı`, r: P.matched, a: 9.75, b: 10.85, tone: TONE.green },
+          { html: `<i></i>Son gün: <b>${due.day} ${due.wd}</b>`, r: S.calendar.deadline, a: 26.1, b: 27.1, tone: TONE.red },
+        ].map((x) => ({ ...x, el: el("div", "pill", $("fx"), x.html) }));
+
+        // ---------- İmleç ----------
+        const cursor = Cursor($("fx"));
+        const CURSORS = [
+          {
+            a: 6.25,
+            b: 8.85,
+            points: [
+              { t: 6.25, x: 1330, y: 240 },
+              { t: 7.05, x: 1172, y: 33 },
+              { t: 8.3, x: 1172, y: 33 },
+              { t: 8.85, x: 1300, y: 200 },
+            ],
+            clicks: [{ t: 7.25, tone: TONE.red }],
+          },
+          {
+            a: 30.3,
+            b: 32.0,
+            points: [
+              { t: 30.3, x: 1120, y: 210 },
+              { t: 30.85, x: 1249, y: 33 },
+              { t: 31.5, x: 1249, y: 33 },
+              { t: 32.0, x: 1330, y: 140 },
+            ],
+            clicks: [{ t: 31.0, tone: TONE.green }],
+          },
+        ];
+        function cursorAt(t, c) {
+          for (const s of CURSORS) {
+            if (t < s.a || t > s.b) continue;
+            const p = cursorPath(s.points, s.clicks, t);
+            const f = mapApp(p.x, p.y, c);
+            let ripple = null;
+            if (p.ripple) {
+              const click = s.clicks.find((k) => t >= k.t);
+              const at = cursorPath(s.points, [], click.t);
+              const rf = mapApp(at.x, at.y, c);
+              ripple = { ...p.ripple, x: rf.x, y: rf.y };
+            }
+            return { x: f.x, y: f.y, v: life(t, s.a, s.b, 0.25, 0.3).v, press: p.press, ripple };
+          }
+          return null;
+        }
+
+        // ---------- Gerekçeli karar: belge kamerası, tarama ve işaretler ----------
+        const D = M.shots.doc.targets;
+        const PAGE = D.page;
+        const page = $("page");
+        page.style.cssText = `left:${PAGE.x}px;top:${PAGE.y}px;width:${PAGE.w}px;height:${PAGE.h}px`;
+        const docImg = page.querySelector("img");
+        docImg.style.cssText = `left:${-PAGE.x}px;top:${-PAGE.y}px;width:${M.shots.doc.size.width}px;height:${M.shots.doc.size.height}px`;
+        const beam = $("beam");
+        beam.style.left = `${PAGE.x}px`;
+        beam.style.width = `${PAGE.w}px`;
+        const PV = (x, y, w, h, { cx = 540, cy = 1090, maxW = 980, maxH = 740, maxK = 2.6 } = {}) => ({
+          K: Math.min(maxW / w, maxH / h, maxK),
+          lx: x + w / 2,
+          ly: y + h / 2,
+          dx: cx,
+          dy: cy,
+        });
+        const midX = PAGE.x + PAGE.w / 2;
+        // Kağıt, karttaki "gerekceli_karar" evrak çipinin yerinden büyüyerek çıkar.
+        const chip = frameRect(P.file, cam.at(T.s2 + 0.9));
+        const FROM = { K: (chip.w / PAGE.w) * 1.3, lx: midX, ly: PAGE.y + PAGE.h * 0.3, dx: chip.x + chip.w / 2, dy: chip.y + chip.h / 2 };
+        const pcam = Camera($("paper"), [
+          { v: FROM },
+          { t: 11.95, dur: 0.65, ease: ease.out, v: { K: 0.8, lx: midX, ly: 560, dx: 540, dy: 1090 } },
+          { t: 12.75, dur: 0.6, v: PV(230, 96, 380, 150) },
+          { t: 14.0, dur: 0.6, v: PV(100, 335, 440, 70) },
+          { t: 15.55, dur: 0.5, v: { K: 0.9, lx: midX, ly: 760, dx: 540, dy: 1090 } },
+          { t: 16.05, dur: 0.6, v: PV(100, 1040, 440, 110) },
+          { t: 17.15, dur: 0.5, ease: ease.in, v: { K: 0.7, lx: midX, ly: 700, dx: 540, dy: 1100 } },
+        ]);
+        const MARKS = [
+          { r: D.title, a: 13.0 },
+          { r: D.plaintiff, a: 14.6 },
+          { r: D.counsel, a: 14.72 },
+          { r: D.verdict, a: 16.75 },
+        ].map((m) => {
+          const e = el("div", "marker", $("paper"));
+          e.style.cssText = `left:${m.r.x - 6}px;top:${m.r.y - 3}px;width:${m.r.w + 12}px;height:${m.r.h + 6}px`;
+          return { ...m, el: e };
+        });
+        const BEAMS = [
+          { a: 12.5, b: 13.3, y0: 70, y1: 215 },
+          { a: 14.15, b: 14.85, y0: 300, y1: 405 },
+          { a: 16.2, b: 16.95, y0: 1030, y1: 1132 },
+        ];
+        const RESULTS = [
+          { html: `<i></i>Belge: <b>Gerekçeli karar</b>`, a: 13.1, tone: TONE.purple },
+          { html: `<i></i>Müvekkil: <b>davacı</b>`, a: 14.8, tone: TONE.purple },
+          { html: `<i></i>Sonuç: <b>aleyhe</b>`, a: 16.9, tone: TONE.red },
+        ].map((x) => {
+          const e = el("div", "pill", $("results"), x.html);
+          e.style.setProperty("--tone", x.tone);
+          return { ...x, el: e };
+        });
+
+        // ---------- Süre kartı ----------
+        const law = $("law");
+        law.innerHTML = `
+          <div class="law__head" data-at="0.15"><span class="law__label">İstinaf süresi</span><span class="law__badge">${ICON.scale}HMK m.345</span></div>
+          <div class="law__big" data-at="0.3">2 hafta</div>
+          <div class="law__note1" data-at="0.42">tebliğden itibaren · kesin süre</div>
+          <div class="law__dates" data-at="0.65">
+            <div class="law__day"><small>TEBLİĞ</small><b>${served.day}</b><span>${served.wd}</span></div>
+            <div class="law__rule"><span>+ 2 hafta</span></div>
+            <div class="law__day law__day--due"><small>SON GÜN</small><b>${due.day}</b><span>${due.wd}</span></div>
+          </div>
+          <div class="law__strip" style="--n:${days.length}">${days
+            .map((d, i) => `<i class="${i === 0 ? "start" : i === days.length - 1 ? "due" : d.we ? "we" : ""}">${d.n}</i>`)
+            .join("")}</div>
+          <div class="law__note" data-at="3.0">${ICON.calendar}<span>Son gün hafta sonuna ya da tatile denk gelirse ilk iş gününe kayar.</span></div>`;
+        const lawParts = [...law.querySelectorAll("[data-at]")].map((e) => ({ el: e, at: Number(e.dataset.at) }));
+        const cells = [...law.querySelectorAll(".law__strip i")];
+        const FILL = T.s3 + 1.15;
+
+        // ---------- Armağan'lar ----------
+        // Ortalı başlığın sağında, sahnenin üst kenarına oturur.
+        const guide = Mascot($("guide"), { color: "red", size: 128, assets: ART("red"), phase: 0.4 });
+        const GX = 932;
+        const GY = 470;
+        const bubble = el("div", "bubble", $("guide"));
+        const SAYS = [
+          { a: 8.75, b: 10.85, text: "Yeni tebligat geldi!" },
+          { a: 11.5, b: 14.4, text: "Okuyorum…" },
+          { a: 18.3, b: 21.2, text: "HMK m.345: iki hafta." },
+          { a: 23.95, b: 25.9, text: "Takvime işledim, görevi açtım." },
+          { a: 31.25, b: 33.3, text: "Sorumlulara haber verdim." },
+          { a: 34.5, b: 37.35, text: "Bundan emin değilim, bakar mısınız?" },
+        ];
+        const HOPS = [6.15, 8.7, 16.85, 20.2, 23.95, 31.1];
+        const SCAN = [12.45, 17.0];
+        const family = ["green", "red", "purple", "yellow"].map((color, i) => ({
+          i,
+          lx: 405 + i * 90,
+          m: Mascot($("family"), { color, size: 100, assets: ART(color), flip: i % 2 === 1, phase: i * 0.9 }),
+        }));
+
+        function rawFocus(t) {
+          const c = cam.at(t);
+          const cur = cursorAt(t, c);
+          if (cur && cur.v > 0.5) return cur;
+          for (const g of RINGS) {
+            if (t >= g.a && t <= g.b) {
+              const f = frameRect(g.r, c);
+              return { x: f.x + f.w / 2, y: f.y + f.h / 2 };
+            }
+          }
+          return { x: 520, y: 1020 };
+        }
+        function gazeAt(t) {
+          let sx = 0;
+          let sy = 0;
+          let sw = 0;
+          for (let i = 0; i < 8; i++) {
+            const w = Math.pow(0.7, i);
+            const f = rawFocus(t - i * 0.05);
+            sx += f.x * w;
+            sy += f.y * w;
+            sw += w;
+          }
+          const dx = sx / sw - (GX + 64);
+          const dy = sy / sw - (GY + 60);
+          const d = Math.hypot(dx, dy) || 1;
+          const reach = Math.min(1, d / 340);
+          let g = { gx: (dx / d) * reach, gy: (dy / d) * reach };
+          const scan = life(t, SCAN[0], SCAN[1], 0.25, 0.25).v;
+          if (scan) g = { gx: g.gx * (1 - scan) + Math.sin(t * 4.2) * 0.85 * scan, gy: g.gy * (1 - scan) + 0.35 * scan };
+          return g;
+        }
+        const hopAt = (t, list) => {
+          for (const h of list) if (t >= h && t < h + 0.64) return (t - h) / 0.64;
+          return 0;
+        };
+
+        // ---------- Üst metinler ----------
+        const COPY = [
+          {
+            a: -1,
+            b: T.intro,
+            xl: true,
+            tone: TONE.red,
+            lines: [["Tebligat geldi.", -1], ["<em>Süreyi kim</em>", 0.45], ["<em>hesaplayacak?</em>", 0.55]],
+          },
+          {
+            a: T.intro,
+            b: T.s1,
+            xl: true,
+            lines: ["Tanışın: <span class=mark>Armağan</span>."],
+            sub: "Hukuk büronuzun yapay zekâlı yeni ekip arkadaşı.",
+            mark: [T.intro + 0.45, T.intro + 1.2],
+          },
+          {
+            a: T.s1,
+            b: T.s2,
+            chip: ["1 · Tebligat gelir", TONE.red],
+            lines: ["Tek tıkla", "UETS'den gelir."],
+            sub: "Chrome eklentisi yeni tebligatı alır, esas numarasından doğru dosyaya bağlar.",
+          },
+          {
+            a: T.s2,
+            b: T.s3,
+            chip: ["2 · Yapay zekâ okur", TONE.purple],
+            lines: ["Armağan", "belgeyi okur."],
+            sub: "Belgenin türünü ve sonucunu anlar; taranmış olsa bile.",
+          },
+          {
+            a: T.s3,
+            b: T.s4,
+            chip: ["3 · Süreyi kanun hesaplar", TONE.red],
+            lines: ["Süreyi tahmin etmez,", "kanundan hesaplar."],
+            sub: "Kurallar kanun maddesine bağlı ve avukatlarca doğrulandı.",
+          },
+          {
+            a: T.s4,
+            b: T.s5,
+            chip: ["4 · Takvime ve göreve işlenir", TONE.yellow],
+            lines: ["Son gün takvime,", "görev sorumluya."],
+            sub: "Kesin süre kırmızıyla takvime düşer; görev dosyanın sorumlu avukatına atanır.",
+          },
+          {
+            a: T.s5,
+            b: T.trust,
+            chip: ["5 · Ekip haberdar olur", TONE.green],
+            lines: ["Görevi alan", "haberdar olur."],
+            sub: "Atanan avukata uygulama içinde bildirim gider.",
+          },
+          {
+            a: T.trust,
+            b: T.outro,
+            chip: ["Emin değilse sorar", TONE.yellow],
+            lines: ["Emin değilse", "süre uydurmaz."],
+            sub: "“İnceleme gerekli” diye işaretler, nedenini yazar, kararı size bırakır.",
+          },
+          {
+            a: T.outro,
+            b: T.end + 1,
+            xl: true,
+            hero: true,
+            lines: ["Yeni ekip arkadaşınız", "<span class=mark>Armağan</span>"],
+            sub: "Karar ve imza her zaman sizde.",
+            mark: [T.outro + 0.7, T.outro + 1.45],
+          },
+        ].map((b) => {
+          const root = el("div", "copy", $("copy"));
+          root.style.top = `${b.chip ? 208 : 250}px`;
+          if (b.tone) root.style.setProperty("--tone", b.tone);
+          const parts = [];
+          if (b.chip) {
+            const c = el("div", "chip", root, `<i></i>${b.chip[0]}`);
+            c.style.setProperty("--tone", b.chip[1]);
+            parts.push({ el: c, at: b.a });
+          }
+          const h = el("div", `headline${b.xl ? " headline--xl" : ""}${b.hero ? " headline--hero" : ""}`, root);
+          b.lines.forEach((line, i) => {
+            const [html, at] = Array.isArray(line) ? line : [line, b.a + 0.07 + i * 0.07];
+            parts.push({ el: el("span", "line", h, html), at });
+          });
+          if (b.sub) parts.push({ el: el("div", "sub", root, b.sub), at: b.a + 0.22 + b.lines.length * 0.06 });
+          return { ...b, root, parts, markEl: root.querySelector(".mark") };
+        });
+
+        // ---------- Kare ----------
+        function seek(t) {
+          const c = cam.apply(t);
+          laptop.shots(t, SCREENS);
+          $("dim").style.opacity = 0.9 * life(t, 11.9, T.s4 + 0.2, 0.45, 0.45).v;
+
+          for (const g of RINGS) {
+            const L = life(t, g.a, g.b, 0.35, 0.25);
+            if (!L.v) {
+              g.el.style.opacity = 0;
+              continue;
+            }
+            const f = frameRect(g.r, c, 8);
+            const s = g.pulse ? 1 + 0.14 * (0.5 - 0.5 * Math.cos((((t - g.a) % 1.1) / 1.1) * 2 * Math.PI)) : 1.18 - 0.18 * L.enter;
+            g.el.style.cssText = `left:${f.x}px;top:${f.y}px;width:${f.w}px;height:${f.h}px;opacity:${L.v};transform:scale(${s});--tone:${g.tone};border-radius:${Math.min(16, f.h / 2)}px`;
+          }
+          for (const p of PILLS) {
+            const L = life(t, p.a, p.b, 0.35, 0.25);
+            if (!L.v) {
+              p.el.style.opacity = 0;
+              continue;
+            }
+            const f = frameRect(p.r, c);
+            const w = p.el.offsetWidth;
+            const x = clamp(f.x + f.w / 2 - w / 2, 40, 1040 - w);
+            p.el.style.cssText = `left:${x}px;top:${f.y + f.h + 22}px;opacity:${L.v};transform:translateY(${(1 - L.enter) * 14}px);--tone:${p.tone}`;
+          }
+          const cur = cursorAt(t, c);
+          cursor.update(cur || { x: -100, y: -100, v: 0 });
+
+          // Belge
+          const pc = pcam.apply(t);
+          $("paper").style.opacity = life(t, 11.95, 17.65, 0.2, 0.4).v;
+          for (const m of MARKS) m.el.style.transform = `scaleX(${ease.out(prog(t, m.a, m.a + 0.35))})`;
+          const bm = BEAMS.find((b) => t >= b.a && t <= b.b);
+          if (bm) {
+            const y = bm.y0 + (bm.y1 - bm.y0) * ease.inOut(prog(t, bm.a, bm.b));
+            beam.style.top = `${y - 64}px`;
+            beam.style.opacity = life(t, bm.a, bm.b, 0.15, 0.15).v;
+          } else beam.style.opacity = 0;
+          for (const r of RESULTS) {
+            const L = life(t, r.a, 17.5, 0.35, 0.3);
+            r.el.style.opacity = L.v;
+            r.el.style.transform = `translateY(${(1 - L.enter) * 16}px) scale(${0.92 + 0.08 * ease.outBack(L.enter)})`;
+          }
+
+          // Süre kartı
+          // Süre kartı, belge çıktıktan sonra girer ve ekran açılmadan önce çıkar (üst üste binmesin).
+          const LC = life(t, T.s3 + 0.15, T.s4 - 0.25, 0.55, 0.35);
+          law.style.opacity = LC.v;
+          law.style.transform = `translateY(${(1 - LC.enter) * 60}px) scale(${0.94 + 0.06 * LC.enter - 0.04 * LC.exit})`;
+          for (const p of lawParts) {
+            const L = life(t, T.s3 + p.at, T.s4 - 0.25, 0.45, 0.01);
+            p.el.style.opacity = L.v;
+            p.el.style.transform = `translateY(${(1 - L.enter) * 22}px)`;
+          }
+          cells.forEach((cell, i) => {
+            const k = ease.out(prog(t, FILL + i * 0.09, FILL + i * 0.09 + 0.25));
+            cell.style.opacity = 0.18 + 0.82 * k;
+            cell.style.transform = `scale(${0.86 + 0.14 * ease.outBack(k)})`;
+            if (i === cells.length - 1) {
+              const pulse = prog(t, FILL + i * 0.09 + 0.2, FILL + i * 0.09 + 1.1);
+              cell.style.boxShadow = pulse > 0 && pulse < 1 ? `0 0 0 ${pulse * 18}px rgb(213 0 0 / ${0.35 * (1 - pulse)})` : "none";
+            }
+          });
+
+          // Rehber Armağan ve konuşma balonu
+          const LG = life(t, 5.95, T.outro + 0.35, 0.5, 0.35);
+          const gz = LG.v ? gazeAt(t) : { gx: 0, gy: 0 };
+          guide.update({
+            t,
+            x: GX,
+            y: GY,
+            opacity: LG.v,
+            scale: (0.45 + 0.55 * ease.outBack(LG.enter)) * (1 - 0.3 * LG.exit),
+            hop: hopAt(t, HOPS),
+            gx: gz.gx,
+            gy: gz.gy,
+          });
+          const say = SAYS.find((s) => t >= s.a && t <= s.b);
+          if (say) {
+            const L = life(t, say.a, say.b, 0.3, 0.22);
+            bubble.textContent = typed(say.text, prog(t, say.a + 0.08, say.a + 0.08 + say.text.length * 0.028)) || "​";
+            bubble.style.cssText = `opacity:${L.v};transform:scale(${0.86 + 0.14 * ease.outBack(L.enter)});top:616px;right:${1080 - 924}px`;
+          } else bubble.style.opacity = 0;
+
+          // Aile (girişte ve kapanışta kapağın üstünde)
+          for (const f of family) {
+            const rise1 = ease.outBack(prog(t, 3.05 + f.i * 0.14, 3.6 + f.i * 0.14));
+            const sink1 = ease.in(prog(t, T.s1 - 0.15, T.s1 + 0.3));
+            const rise2 = ease.outBack(prog(t, T.outro + 0.6 + f.i * 0.14, T.outro + 1.15 + f.i * 0.14));
+            const up = t < T.outro ? rise1 * (1 - sink1) : rise2;
+            const a = cam.map(f.lx, 760 + 10, c);
+            const intro = life(t, 4.6, T.s1, 0.4, 0.3).v;
+            f.m.update({
+              t,
+              x: a.x - 50,
+              y: a.y - 105.4 + (1 - up) * 112 * c.K,
+              scale: c.K,
+              opacity: up > 0.005 ? 1 : 0,
+              hop: hopAt(t, [4.15 + f.i * 0.1, T.outro + 2.0 + f.i * 0.1, T.outro + 3.3 + f.i * 0.08]),
+              gx: (f.i - 1.5) * -0.25 * (1 - intro),
+              gy: 0.15 - 0.9 * intro,
+              wink: f.i === 0 ? Math.sin(clamp((t - (T.end - 1.1)) / 0.3) * Math.PI) : 0,
+            });
+          }
+
+          // Üst metinler
+          for (const b of COPY) {
+            const on = t >= b.a - 0.001 && t <= b.b;
+            b.root.style.visibility = on ? "visible" : "hidden";
+            if (!on) continue;
+            for (const p of b.parts) {
+              const L = life(t, p.at, b.b, 0.5, 0.28);
+              p.el.style.opacity = L.v;
+              p.el.style.transform = `translateY(${(1 - L.enter) * 34 - L.exit * 18}px)`;
+            }
+            if (b.markEl) b.markEl.style.setProperty("--draw", ease.inOut(prog(t, b.mark[0], b.mark[1])));
+          }
+
+          const LL = life(t, T.outro + 1.3, T.end + 1, 0.6, 0.01);
+          $("lockup").style.opacity = LL.v;
+          $("lockup").style.transform = `translateY(${(1 - LL.enter) * 24}px)`;
+        }
+
+        run({ duration: T.end, seek });
+      }
+    </script>
+  </body>
+</html>
